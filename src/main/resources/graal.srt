@@ -1,0 +1,456 @@
+1
+00:00:00,000 --> 00:00:06,480
+One of the interesting topics that was added when Spring Boot went to 3 was
+
+2
+00:00:06,480 --> 00:00:11,840
+the idea of introducing the native compiler to work with Graal virtual
+
+3
+00:00:11,840 --> 00:00:17,400
+machine images. There's a certain set of documentation here that's been included
+
+4
+00:00:17,400 --> 00:00:22,600
+in the Spring Boot documentation. So here I'm looking at the Spring Boot docs and
+
+5
+00:00:22,600 --> 00:00:29,880
+Section 15 is on what they called Graal VM native image support. And the idea is
+
+6
+00:00:29,880 --> 00:00:36,840
+that Graal is a special virtual machine that is made available by Oracle. And when you install it
+
+7
+00:00:36,840 --> 00:00:43,960
+as a Java virtual machine, it includes a tool called Native Image that will take your jar file,
+
+8
+00:00:43,960 --> 00:00:49,400
+your output executable, and compile it down to machine language for the platform you're on.
+
+9
+00:00:49,400 --> 00:00:55,080
+Now there's a certain weird feeling about that for Java people, because after all, we're supposed to
+
+10
+00:00:55,080 --> 00:01:01,720
+be right once run anywhere, right? Still, if you can create machine language for the platform you're
+
+11
+00:01:01,720 --> 00:01:08,600
+on, there can be significant performance improvements when you do that. So they have information here
+
+12
+00:01:08,600 --> 00:01:14,440
+about it and what it is especially good at is this idea that they're highlighting here called
+
+13
+00:01:14,440 --> 00:01:22,600
+function as a service platform. See, here's what Graal buys you is you get extremely fast startup
+
+14
+00:01:22,600 --> 00:01:29,880
+times with low memory. But the price you pay is that it takes time to build these images.
+
+15
+00:01:29,880 --> 00:01:35,560
+So every time you modify something you've got to rebuild, now your build time goes up considerably,
+
+16
+00:01:35,560 --> 00:01:43,800
+plus the executable you create is much larger than what you would normally deal with. So if you are
+
+17
+00:01:43,800 --> 00:01:49,320
+working with an application that really is function as a service, it's some stateless function you're
+
+18
+00:01:49,320 --> 00:01:51,080
+you're going to deploy in a cloud provider,
+
+19
+00:01:51,080 --> 00:01:53,520
+and it's going to sleep in between calls.
+
+20
+00:01:53,520 --> 00:01:55,600
+So startup time is everything.
+
+21
+00:01:55,600 --> 00:01:58,560
+So startup time is going to be hugely important
+
+22
+00:01:58,560 --> 00:02:00,040
+to an application like that,
+
+23
+00:02:00,040 --> 00:02:02,180
+then Graal's a great choice for that.
+
+24
+00:02:02,180 --> 00:02:05,100
+If you're building a standard RESTful web service
+
+25
+00:02:05,100 --> 00:02:09,620
+or an application that is just going to service web requests,
+
+26
+00:02:09,620 --> 00:02:10,520
+it doesn't really matter
+
+27
+00:02:10,520 --> 00:02:12,840
+if it takes a couple extra seconds to start up.
+
+28
+00:02:12,840 --> 00:02:15,240
+What matters there is that it responds
+
+29
+00:02:15,240 --> 00:02:16,820
+to requests very, very quickly.
+
+30
+00:02:16,820 --> 00:02:19,200
+So with this in mind,
+
+31
+00:02:19,200 --> 00:02:22,960
+I'm gonna go back to the application we did
+
+32
+00:02:22,960 --> 00:02:24,460
+in the first couple modules,
+
+33
+00:02:24,460 --> 00:02:26,960
+the one that accessed the Astro service
+
+34
+00:02:26,960 --> 00:02:30,240
+and had a little bit of persistence in it and everything.
+
+35
+00:02:30,240 --> 00:02:33,360
+And I'm gonna compile that for the Graal native machine.
+
+36
+00:02:33,360 --> 00:02:36,960
+Now, what they point out in the documentation here
+
+37
+00:02:36,960 --> 00:02:41,960
+is that you can do this with Maven or with Gradle.
+
+38
+00:02:41,960 --> 00:02:48,800
+Now, they do have to do all this extra static analysis
+
+39
+00:02:48,800 --> 00:02:50,340
+and they can't do anything dynamic.
+
+40
+00:02:50,340 --> 00:02:52,740
+They can't do any kind of reflection stuff,
+
+41
+00:02:52,740 --> 00:02:54,740
+no lazy class loading,
+
+42
+00:02:54,740 --> 00:02:56,300
+everything shipped in the executables
+
+43
+00:02:56,300 --> 00:02:57,500
+will be loaded in memory, right?
+
+44
+00:02:57,500 --> 00:02:58,580
+It's startup.
+
+45
+00:02:58,580 --> 00:03:00,700
+All this stuff is in here.
+
+46
+00:03:00,700 --> 00:03:02,780
+And they talk about doing what they call
+
+47
+00:03:02,780 --> 00:03:05,380
+ahead of time processing no less,
+
+48
+00:03:05,380 --> 00:03:06,780
+which always sounds funny to me,
+
+49
+00:03:06,780 --> 00:03:09,060
+but that's the basic idea.
+
+50
+00:03:09,060 --> 00:03:11,460
+So if I skip down a bit,
+
+51
+00:03:11,460 --> 00:03:17,220
+they have a trivial app in the documentation
+
+52
+00:03:17,220 --> 00:03:20,660
+that's just a RESTful web service, a RESTful controller
+
+53
+00:03:20,660 --> 00:03:23,380
+that returns the string hello world to a result mapping.
+
+54
+00:03:23,380 --> 00:03:25,180
+We're going to do a little bit better than that.
+
+55
+00:03:25,180 --> 00:03:27,420
+And you could work with build packs.
+
+56
+00:03:27,420 --> 00:03:30,500
+You could also work with, as they show here,
+
+57
+00:03:30,500 --> 00:03:35,500
+Maven plugin or Gradle, but those are working with Docker.
+
+58
+00:03:35,500 --> 00:03:38,180
+So this would assume that you had, say,
+
+59
+00:03:38,180 --> 00:03:41,300
+Docker desktop installed on your machine.
+
+60
+00:03:41,300 --> 00:03:43,200
+That's fine, and you can do that,
+
+61
+00:03:43,200 --> 00:03:46,260
+but what I decided to do instead
+
+62
+00:03:46,260 --> 00:03:50,760
+is download and install the Graal VM itself.
+
+63
+00:03:50,760 --> 00:03:54,080
+So with that in mind, if I go to my app here,
+
+64
+00:03:54,080 --> 00:03:57,460
+now the first change I had to make by the way
+
+65
+00:03:57,460 --> 00:04:02,460
+is in the build file, I had to add this line,
+
+66
+00:04:02,460 --> 00:04:07,300
+the Graal VM build tools native plugin
+
+67
+00:04:07,300 --> 00:04:09,540
+with the current version, whatever it is.
+
+68
+00:04:09,540 --> 00:04:13,700
+So I went to start.spring.io and I added that.
+
+69
+00:04:13,700 --> 00:04:15,340
+In fact, let me just show you here.
+
+70
+00:04:15,340 --> 00:04:18,620
+Here is start.spring.io.
+
+71
+00:04:18,620 --> 00:04:21,340
+There's the Graal VM native image support.
+
+72
+00:04:21,340 --> 00:04:24,780
+I added that to the project and when I hit explore,
+
+73
+00:04:24,780 --> 00:04:27,700
+that gave me the one line I needed to copy
+
+74
+00:04:27,700 --> 00:04:29,560
+and put into my file.
+
+75
+00:04:29,560 --> 00:04:31,460
+That's the only thing I needed to do.
+
+76
+00:04:31,460 --> 00:04:34,180
+That's one of the nice things about Spring with this
+
+77
+00:04:34,180 --> 00:04:36,620
+is that I don't have to do a bunch of setup.
+
+78
+00:04:36,620 --> 00:04:39,300
+And then when I opened up a console,
+
+79
+00:04:39,300 --> 00:04:41,540
+then I could run what they call
+
+80
+00:04:41,540 --> 00:04:49,100
+Gradle native compile step. Now I would run that now except then I'd have to
+
+81
+00:04:49,100 --> 00:04:53,780
+speed up the video because it takes somewhere between two and three minutes
+
+82
+00:04:53,780 --> 00:04:59,860
+to run through all that. So rather than run it again I'll just show you that it
+
+83
+00:04:59,860 --> 00:05:06,820
+basically put in my build directory under build there's a native folder and
+
+84
+00:05:06,820 --> 00:05:09,260
+and then a native compile folder.
+
+85
+00:05:09,260 --> 00:05:13,040
+And inside there, there's now an executable called demo,
+
+86
+00:05:13,040 --> 00:05:14,200
+right there.
+
+87
+00:05:14,200 --> 00:05:17,360
+So if I just give it the path to that,
+
+88
+00:05:17,360 --> 00:05:22,360
+build/native/native-compile-demo,
+
+89
+00:05:22,360 --> 00:05:23,200
+look at that.
+
+90
+00:05:23,200 --> 00:05:25,260
+It took approximately, well,
+
+91
+00:05:25,260 --> 00:05:28,960
+a 10th of a second to start up.
+
+92
+00:05:28,960 --> 00:05:30,680
+Now I've done it a couple of times,
+
+93
+00:05:30,680 --> 00:05:32,360
+so there may be some caching going on,
+
+94
+00:05:32,360 --> 00:05:35,960
+but basically by the time I hit enter, it was running.
+
+95
+00:05:35,960 --> 00:05:37,400
+That's the game.
+
+96
+00:05:37,400 --> 00:05:40,440
+Now what's the price you pay for this sort of thing?
+
+97
+00:05:40,440 --> 00:05:44,400
+If I look again at what we just saw,
+
+98
+00:05:44,400 --> 00:05:46,480
+well here I'll do it again.
+
+99
+00:05:46,480 --> 00:05:51,240
+The size of that executable is now 170 megs.
+
+100
+00:05:51,240 --> 00:05:53,040
+I mean it's got everything in it.
+
+101
+00:05:53,040 --> 00:05:54,960
+So it went up by a lot.
+
+102
+00:05:54,960 --> 00:05:57,320
+I remember I've got a couple of interfaces
+
+103
+00:05:57,320 --> 00:06:00,560
+and a couple of classes and one controller,
+
+104
+00:06:00,560 --> 00:06:02,200
+well and a rest controller as well.
+
+105
+00:06:02,200 --> 00:06:05,120
+It's just not very big as an application
+
+106
+00:06:05,120 --> 00:06:12,160
+yet it made 170 meg executable. But you saw all I had to do was hit enter. Here I'll do it again.
+
+107
+00:06:12,160 --> 00:06:21,440
+Bang! 0.093 seconds and it's running. So that's very attractive. It's very appealing to people
+
+108
+00:06:21,440 --> 00:06:26,880
+who are doing this function as a service idea. Now again you have to compile it for the right
+
+109
+00:06:26,880 --> 00:06:33,360
+virtual machine and you have to do it on each specific platform. But it's nice and the compilation
+
+110
+00:06:33,360 --> 00:06:38,720
+process is a little flaky. They're still working the bugs out. But this was the big addition in
+
+111
+00:06:38,720 --> 00:06:45,600
+Spring 3. I mean other than the upgrade to Java 17 and the use of the Java EE library with the
+
+112
+00:06:45,600 --> 00:06:51,280
+Jakarta packages and everything, the big addition was this support for the Graal virtual machine,
+
+113
+00:06:51,280 --> 00:06:56,880
+and you may enjoy using it. So have fun, good luck, you know, I hope it works out for you as well as
+
+114
+00:06:56,880 --> 00:06:59,520
+as it did for me.
+
