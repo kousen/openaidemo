@@ -30,29 +30,6 @@ class ChatGPTTest {
     }
 
     @Test
-    void system_and_user_request() {
-        Message systemMessage = new Message(Role.SYSTEM, """
-                Create a multiple-choice quiz about the topic in the
-                next message. The quiz should have
-                three questions and four possible answers,
-                with only one correct answer per question.
-                Label the answers A through D, and identify
-                which answer is correct.
-                
-                After that, add a section that explains all the answers,
-                again labeled A through D.
-                """);
-        Message userMessage = new Message(Role.USER,
-                "The topic is text blocks in Java 17.");
-        ChatRequest request = new ChatRequest("gpt-3.5-turbo",
-                List.of(systemMessage, userMessage),
-                0.7);
-        ChatResponse response = chat.createChatResponse(request);
-        System.out.println(response.usage());
-        System.out.println(response.choices().get(0).message().content());
-    }
-
-    @Test
     void read_file() {
         String data = chat.readFile("src/main/resources/graal.srt");
         System.out.println(data.length());

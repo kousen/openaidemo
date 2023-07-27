@@ -16,7 +16,8 @@ import java.util.List;
 
 public class ChatGPT {
     private static final String CHAT_URL = "https://api.openai.com/v1/chat/completions";
-    private final static String MODEL = "gpt-3.5-turbo";
+    //private final static String MODEL = "gpt-3.5-turbo";
+    private final static String MODEL = "gpt-4";
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -56,11 +57,10 @@ public class ChatGPT {
         try {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
             return gson.fromJson(response.body(), ChatResponse.class);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
+
 }
