@@ -1,0 +1,7 @@
+The file EarningsCall.wav is from the OpenAI tutorial on using the Whisper model to transcribe text from audio.
+
+See https://platform.openai.com/docs/tutorials/meeting-minutes for details.
+
+(Looks like it's too long to be uploaded. Sigh.)
+
+The file AssertJExceptions.wav was exported from Descript from a YouTube short I created on the topic. See https://www.youtube.com/shorts/JUZjnkpYPgY for details.
