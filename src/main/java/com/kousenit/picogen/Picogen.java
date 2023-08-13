@@ -34,14 +34,14 @@ public class Picogen {
                           String status, Payload payload, List<String> result, int durationMs,
                           long createdAt, long updatedAt) {
         public record Payload(Options options, String model, String command, int version){
-            public record Options(String size, int count, String style,
+            public record Options(String size, String style,
                                   String engine, String prompt) {}
         }
     }
 
     public record ListResponse(List<GetResponse> items) {}
 
-    public record GenerateRequest(int version, int count, String model, String command,
+    public record GenerateRequest(int version, String model, String command,
                           String prompt, String ratio, String style, String engine) {}
 
     // model:
@@ -53,7 +53,7 @@ public class Picogen {
     //                  niji-5-cute, niji-5-expressive, niji-5-original, niji-5-scenic
     //      Default: mj-5.2
     public GenerateRequest createJobRequest(String model, String prompt, String engine) {
-        return new GenerateRequest(1, 1, model, "generate", prompt,
+        return new GenerateRequest(1, model, "generate", prompt,
                 "16:9", "photographic", engine);
     }
 
@@ -134,12 +134,15 @@ public class Picogen {
 
     public GetResponse waitForResponseCompletion(JobResponse jobResponse) {
         GetResponse response = getResponse(jobResponse);
+        if (response.status().equals("error")) {
+            throw new RuntimeException("Error: " + response);
+        }
         while (!isResponseCompleted(response)) {
             // System.out.println(response.status() + "...");
             sleepInterruptibly();
             response = getResponse(jobResponse);
         }
-        System.out.println("Completed in " + response.durationMs() + " ms");
+        System.out.println("Completed in " + (response.durationMs() / 1000) + " seconds");
         return response;
     }
 
@@ -167,5 +170,7 @@ public class Picogen {
         JobResponse jobResponse = picogen.doJob(jobRequest);
         GetResponse response = picogen.waitForResponseCompletion(jobResponse);
         System.out.println(response.result().get(0));
+
+        //picogen.getJobList().forEach(System.out::println);
     }
 }
