@@ -1,4 +1,4 @@
-package com.kousenit;
+package com.kousenit.openai;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

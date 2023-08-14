@@ -27,23 +27,6 @@ public class Picogen {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    public record JobResponse(String id, int cost) {}
-
-    // status:  'created', 'processing', 'completed', or 'error'
-    public record GetResponse(long id, long accountId, long tokenId, long transactionId,
-                          String status, Payload payload, List<String> result, int durationMs,
-                          long createdAt, long updatedAt) {
-        public record Payload(Options options, String model, String command, int version){
-            public record Options(String size, String style,
-                                  String engine, String prompt) {}
-        }
-    }
-
-    public record ListResponse(List<GetResponse> items) {}
-
-    public record GenerateRequest(int version, String model, String command,
-                          String prompt, String ratio, String style, String engine) {}
-
     // model:
     //      'stability', 'midjourney', 'dalle2'
     // engine:

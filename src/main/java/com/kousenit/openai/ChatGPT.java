@@ -1,4 +1,4 @@
-package com.kousenit;
+package com.kousenit.openai;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;

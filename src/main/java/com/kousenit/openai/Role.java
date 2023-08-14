@@ -1,4 +1,4 @@
-package com.kousenit;
+package com.kousenit.openai;
 
 public enum Role {
     USER, SYSTEM, ASSISTANT;
