@@ -8,6 +8,7 @@ public record ChatResponse(String id,
                            String model,
                            ChatUsage usage,
                            List<ChatResponseChoice> choices) {
+
     public record ChatUsage(
             int promptTokens,
             int completionTokens,
@@ -19,4 +20,5 @@ public record ChatResponse(String id,
             int index,
             String finishReason
     ) {}
+
 }
