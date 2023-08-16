@@ -1,5 +1,6 @@
 package com.kousenit.picogen;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +36,7 @@ class PicogenTest {
         System.out.println(request);
     }
 
-    @Test
+    @Test @Disabled("Only run when you have credits")
     void testDoStabilityJob() {
         var request = RequestFactory.createStabilityJobRequest("A beautiful sunset", "xl-v1.0");
         var response = picogen.doStabilityJob(request);
@@ -43,7 +44,7 @@ class PicogenTest {
         System.out.println(response);
     }
 
-    @Test
+    @Test @Disabled("Only run when you have credits")
     void testDoMidjourneyJob() {
         var request = RequestFactory.createMidjourneyJobRequest("A beautiful sunset", "mj-5.2");
         var response = picogen.doMidjourneyJob(request);
@@ -51,7 +52,7 @@ class PicogenTest {
         System.out.println(response);
     }
 
-    @Test
+    @Test @Disabled("Replace placeholder id with your own valid id")
     void getResponseFromJobResponse() {
         JobResponse jobResponse = new JobResponse("12553131879563265", 16);
         var response = picogen.getResponse(jobResponse);

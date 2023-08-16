@@ -12,3 +12,5 @@ The following API codes are read as system properties using `System.getenv(...)`
 
 * `OPENAI_API_KEY` - required for `ServiceDemo.java`, `ChatGPT.java`, and `WhisperAI.java`
 * `PICOGEN_API_KEY` - used by `Picogen.java`
+
+To execute the `ImageDownloader` class, which downloads the current job list from Picogen and displays the first image with JavaFX, use the `./gradlew run` task.
