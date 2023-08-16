@@ -4,6 +4,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,9 +18,10 @@ import java.util.stream.Collectors;
 
 // See docs at https://picogen.io/docs
 public class Picogen {
+    private static final Logger logger = LoggerFactory.getLogger(Picogen.class);
     private static final String BASEURL = "https://api.picogen.io";
     private static final String COMPLETED_STATUS = "completed";
-    private static final int SLEEP_TIME_MILLIS = 1000;
+    private static final int SLEEP_TIME_MILLIS = 5000;
 
     private final HttpClient client = HttpClient.newHttpClient();
 
@@ -27,9 +30,17 @@ public class Picogen {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
+    public JobResponse doStabilityJob(StabilityRequest stabilityRequest) {
+        return doJob(stabilityRequest);
+    }
+
+    public JobResponse doMidjourneyJob(MidjourneyRequest midjourneyRequest) {
+        return doJob(midjourneyRequest);
+    }
+
     private <T> JobResponse doJob(T requestObject) {
         String json = gson.toJson(requestObject);
-        System.out.println("Request: " + json); // Keep this line for debugging
+        logger.info("Request: " + json);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASEURL + "/job/run"))
@@ -40,7 +51,7 @@ public class Picogen {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String string = response.body();
-            System.out.println("Server response: " + string); // Keep this line for debugging
+            logger.info("Server response: " + string); // Keep this line for debugging
             List<JobResponse> jobResponses = gson.fromJson(string,
                     new TypeToken<List<JobResponse>>(){}.getType());
             JobResponse jobResponse = jobResponses.get(1);
@@ -49,14 +60,6 @@ public class Picogen {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public JobResponse doStabilityJob(StabilityRequest stabilityRequest) {
-        return doJob(stabilityRequest);
-    }
-
-    public JobResponse doMidjourneyJob(MidjourneyRequest midjourneyRequest) {
-        return doJob(midjourneyRequest);
     }
 
     public List<String> getJobList() {
@@ -94,7 +97,7 @@ public class Picogen {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
             String string = response.body();
-            System.out.println("Server response: " + string); // Keep this line for debugging
+            logger.info("Server response: " + string); // Keep this line for debugging
 
             // Parse the response as a List of GetResponse
             List<GetResponse> getResponses = gson.fromJson(string,
@@ -115,11 +118,11 @@ public class Picogen {
             throw new RuntimeException("Error: " + response);
         }
         while (!isResponseCompleted(response)) {
-            // System.out.println(response.status() + "...");
+            // logger.info(response.status() + "...");
             sleepInterruptibly();
             response = getResponse(jobResponse);
         }
-        System.out.println("Completed in " + (response.durationMs() / 1000) + " seconds");
+        logger.info("Completed in " + (response.durationMs() / 1000) + " seconds");
         return response;
     }
 
@@ -135,18 +138,29 @@ public class Picogen {
         }
     }
 
+    public void midjourneyRequest(String prompt) {
+        MidjourneyRequest jobRequest = RequestFactory.createMidjourneyJobRequest(
+                prompt,
+                "mj-5.2");
+        JobResponse jobResponse = doMidjourneyJob(jobRequest);
+        GetResponse response = waitForResponseCompletion(jobResponse);
+        response.result().forEach(System.out::println);
+    }
+
+    public void stabilityRequest(String prompt) {
+        StabilityRequest jobRequest = RequestFactory.createStabilityJobRequest(
+                prompt,
+                "xl-v1.0");
+        JobResponse jobResponse = doStabilityJob(jobRequest);
+        GetResponse response = waitForResponseCompletion(jobResponse);
+        response.result().forEach(System.out::println);
+    }
+
     public static void main(String[] args) {
         Picogen picogen = new Picogen();
-        StabilityRequest jobRequest = RequestFactory.createStabilityJobRequest(
-                """
-                Captain James T. Kirk in a light-saber battle
-                with a Klingon on the bridge of the Enterprise.
-                """,
-                "xl-v1.0");
-        JobResponse jobResponse = picogen.doStabilityJob(jobRequest);
-        GetResponse response = picogen.waitForResponseCompletion(jobResponse);
-        System.out.println(response.result().get(0));
-
-        //picogen.getJobList().forEach(System.out::println);
+        String prompt = """
+                Happy kitten on Babylon 5 space station""";
+        // picogen.midjourneyRequest(prompt);
+        picogen.stabilityRequest(prompt);
     }
 }

@@ -39,9 +39,12 @@ class ChatGPTTest {
     @Test
     void generate_quiz_questions_from_transcript() {
         Message systemMessage = new Message(Role.SYSTEM, """
+                You are a Java instructor who recorded a video course,
+                and need to create a quiz for the course.
+                
                 The next message contains the transcript of a video
-                about using the GraalVM native-image tool to create
-                a native executable from a Java program.
+                from the course about using the GraalVM native-image tool
+                to create a native executable from a Java program.
                 
                 Create a multiple-choice quiz about the text.
                 The quiz should have three questions with four

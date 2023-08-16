@@ -13,7 +13,8 @@ repositories {
 dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-    implementation("org.slf4j:slf4j-nop:2.0.7")
+    implementation("org.slf4j:slf4j-api:2.0.7")
+    implementation("org.slf4j:slf4j-simple:2.0.7")
 
     // JavaFX dependencies
     implementation("org.openjfx:javafx-controls:17.0.1")
