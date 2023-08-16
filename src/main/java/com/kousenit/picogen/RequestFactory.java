@@ -1,6 +1,6 @@
 package com.kousenit.picogen;
 
-// Example request:
+// Example request from the docs:
 // {
 //    "version": 1,
 //    "count": 1,  // not allowed for midjourney
@@ -23,5 +23,15 @@ package com.kousenit.picogen;
 //      Stability: xl-v1.0 (default), 512-v2.1, 768-v2.1, v1.5
 //      Midjourney: mj-4, mj-5.1, mj-5.1-raw, mj-5.2 (default), mj-5.2-raw, niji-4, niji-5,
 //                  niji-5-cute, niji-5-expressive, niji-5-original, niji-5-scenic
-public record GenerateRequest(int version, String model, String command,
-                              String prompt, String ratio, String style, String engine) {}
+//      Not allowed for dalle2
+
+public class RequestFactory {
+    public static StabilityRequest createStabilityJobRequest(String prompt, String engine) {
+        return new StabilityRequest(1, "stability", "generate", prompt,
+                "16:9", "photographic", engine);
+    }
+
+    public static MidjourneyRequest createMidjourneyJobRequest(String prompt, String engine) {
+        return new MidjourneyRequest(1, "midjourney", "generate", prompt, engine);
+    }
+}

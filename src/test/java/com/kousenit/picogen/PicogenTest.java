@@ -16,8 +16,8 @@ class PicogenTest {
     }
 
     @Test
-    void testCreateJobRequest() {
-        var request = picogen.createJobRequest("stability", "A beautiful sunset", "xl-v1.0");
+    void testCreateStabilityJobRequest() {
+        var request = RequestFactory.createStabilityJobRequest("A beautiful sunset", "xl-v1.0");
         assertNotNull(request);
         assertEquals("stability", request.model());
         assertEquals("A beautiful sunset", request.prompt());
@@ -26,13 +26,36 @@ class PicogenTest {
     }
 
     @Test
-    void testDoJob() {
-        var request = picogen.createJobRequest("stability", "A beautiful sunset", "xl-v1.0");
-        var response = picogen.doJob(request);
+    void testCreateMidjourneyJobRequest() {
+        var request = RequestFactory.createMidjourneyJobRequest("A beautiful sunset", "mj-5.2");
+        assertNotNull(request);
+        assertEquals("midjourney", request.model());
+        assertEquals("A beautiful sunset", request.prompt());
+        assertEquals("mj-5.2", request.engine());
+        System.out.println(request);
+    }
+
+    @Test
+    void testDoStabilityJob() {
+        var request = RequestFactory.createStabilityJobRequest("A beautiful sunset", "xl-v1.0");
+        var response = picogen.doStabilityJob(request);
         assertNotNull(response);
-        System.out.println(response.id());
-        System.out.println(response.cost());
         System.out.println(response);
     }
 
+    @Test
+    void testDoMidjourneyJob() {
+        var request = RequestFactory.createMidjourneyJobRequest("A beautiful sunset", "mj-5.2");
+        var response = picogen.doMidjourneyJob(request);
+        assertNotNull(response);
+        System.out.println(response);
+    }
+
+    @Test
+    void getResponseFromJobResponse() {
+        JobResponse jobResponse = new JobResponse("12553131879563265", 16);
+        var response = picogen.getResponse(jobResponse);
+        assertNotNull(response);
+        System.out.println(response);
+    }
 }

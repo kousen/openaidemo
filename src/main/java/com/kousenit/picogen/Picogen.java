@@ -27,21 +27,9 @@ public class Picogen {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    // model:
-    //      'stability', 'midjourney', 'dalle2'
-    // engine:
-    //      Stability: xl-v1.0, 512-v2.1, 768-v2.1, v1.5
-    //      Default: xl-v1.0
-    //      Midjourney: mj-4, mj-5.1, mj-5.1-raw, mj-5.2, mj-5.2-raw, niji-4, niji-5,
-    //                  niji-5-cute, niji-5-expressive, niji-5-original, niji-5-scenic
-    //      Default: mj-5.2
-    public GenerateRequest createJobRequest(String model, String prompt, String engine) {
-        return new GenerateRequest(1, model, "generate", prompt,
-                "16:9", "photographic", engine);
-    }
-
-    public JobResponse doJob(GenerateRequest generateRequest) {
-        String json = gson.toJson(generateRequest);
+    private <T> JobResponse doJob(T requestObject) {
+        String json = gson.toJson(requestObject);
+        System.out.println("Request: " + json); // Keep this line for debugging
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASEURL + "/job/run"))
@@ -50,8 +38,7 @@ public class Picogen {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         try {
-            HttpResponse<String> response =
-                    client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String string = response.body();
             System.out.println("Server response: " + string); // Keep this line for debugging
             List<JobResponse> jobResponses = gson.fromJson(string,
@@ -62,6 +49,14 @@ public class Picogen {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public JobResponse doStabilityJob(StabilityRequest stabilityRequest) {
+        return doJob(stabilityRequest);
+    }
+
+    public JobResponse doMidjourneyJob(MidjourneyRequest midjourneyRequest) {
+        return doJob(midjourneyRequest);
     }
 
     public List<String> getJobList() {
@@ -108,8 +103,7 @@ public class Picogen {
             // Get the first non-null response
             return getResponses.stream()
                     .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("No valid response"));
+                    .findFirst().orElseThrow(() -> new RuntimeException("No valid response"));
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -143,14 +137,13 @@ public class Picogen {
 
     public static void main(String[] args) {
         Picogen picogen = new Picogen();
-        GenerateRequest jobRequest = picogen.createJobRequest(
-                "stability",
+        StabilityRequest jobRequest = RequestFactory.createStabilityJobRequest(
                 """
                 Captain James T. Kirk in a light-saber battle
                 with a Klingon on the bridge of the Enterprise.
                 """,
                 "xl-v1.0");
-        JobResponse jobResponse = picogen.doJob(jobRequest);
+        JobResponse jobResponse = picogen.doStabilityJob(jobRequest);
         GetResponse response = picogen.waitForResponseCompletion(jobResponse);
         System.out.println(response.result().get(0));
 
