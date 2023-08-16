@@ -23,7 +23,7 @@ public class ImageDownloader extends Application {
         List<String> jobList = picogen.getJobList();
 
         // URL of image to download
-        URL url = new URL(jobList.get(jobList.size() - 1));
+        URL url = new URL(jobList.get(0));
 
         // Download image from URL
         Image image = new Image(url.openStream());
