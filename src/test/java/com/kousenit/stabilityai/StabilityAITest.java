@@ -20,6 +20,8 @@ class StabilityAITest {
 
     @Test @Disabled("Requires credits to run")
     void sampleImage() {
-        stabilityAI.generateImages("A lighthouse on a cliff");
+        stabilityAI.generateImages("""
+                Batman and Robin playing Fortnight on the Bat-computer
+                """);
     }
 }

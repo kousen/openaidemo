@@ -8,6 +8,13 @@ import java.util.List;
 //      1024x1024, 1152x896, 1216x832, 1344x768, 1536x640,
 //      640x1536, 768x1344, 832x1216, 896x1152
 
+// sampler: (Not included in record)
+//      DDIM, DDPM, K_DPMPP_2M, K_DPMPP_2S_ANCESTRAL, K_DPM_2,
+//      K_DPM_2_ANCESTRAL K_EULER K_EULER_ANCESTRAL K_HEUN K_LMS
+//
+//      Which sampler to use for the diffusion process. If this value is omitted
+//      we'll automatically select an appropriate sampler for you.
+
 // cfgScale: 0..35, Default: 7
 //      How strictly the diffusion process adheres to the prompt text
 //      (higher values keep your image closer to your prompt)
@@ -31,6 +38,6 @@ import java.util.List;
 //      This list of style presets is subject to change.
 
 public record Payload(int cfgScale, String clipGuidancePreset, String stylePreset,
-                      int height, int width, String sampler, int samples, int steps,
+                      int height, int width, int samples, int steps,
                       List<TextPrompt> textPrompts
 ) {}
