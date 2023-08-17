@@ -14,6 +14,11 @@ class ChatGPTTest {
     private final ChatGPT chat = new ChatGPT();
 
     @Test
+    void list_models() {
+        chat.listModels();
+    }
+
+    @Test
     void test_response_from_documentation() {
         String prompt = "Say this is a test!";
         String response = chat.getResponse(prompt);
