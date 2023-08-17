@@ -15,11 +15,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class StabilityAI {
     private static final String BASE_URL = "https://api.stability.ai";
@@ -44,8 +46,9 @@ public class StabilityAI {
     }
 
     public void generateImages(String prompt) {
-        Payload payload = new Payload(7, "NONE", "photographic",
-                1024, 1024, "K_DPM_2_ANCESTRAL", 1, 75,
+        Payload payload = new Payload(
+                7, "NONE", "photographic",
+                1024, 1024, 1, 40,
                 List.of(new TextPrompt(prompt, 1)));
 
         Artifacts response = makePostRequest(
@@ -99,16 +102,18 @@ public class StabilityAI {
         }
     }
 
-    private void saveImages(List<Image> images) {
-        IntStream.range(0, images.size()).forEach(i -> {
-            Image image = images.get(i);
-            try {
-                byte[] imgBytes = Base64.getDecoder().decode(image.base64());
-                Files.write(Paths.get("src/main/resources/image" + i + ".png"), imgBytes);
-                logger.info("Wrote image{} to src/main/resources/image{}.png", i, i);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        });
+    public void saveImages(List<Image> images) {
+        images.forEach(this::writeImage);
+    }
+
+    private void writeImage(Image image) {
+        try {
+            byte[] imgBytes = Base64.getDecoder().decode(image.base64());
+            Files.write(Paths.get(
+                    "src/main/resources/image" + image.seed() + ".png"), imgBytes);
+            logger.info("Wrote image to src/main/resources/image{}.png", image.seed());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
