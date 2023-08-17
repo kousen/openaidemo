@@ -92,7 +92,7 @@ public class StabilityAI {
         try {
             Files.copy(
                     new ByteArrayInputStream(response.toString().getBytes()),
-                    Path.of("response.json"),
+                    Path.of("src/main/resources/response.json"),
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -104,8 +104,8 @@ public class StabilityAI {
             Image image = images.get(i);
             try {
                 byte[] imgBytes = Base64.getDecoder().decode(image.base64());
-                Files.write(Paths.get("image" + i + ".png"), imgBytes);
-                logger.info("Wrote image{} to image{}.png", i, i);
+                Files.write(Paths.get("src/main/resources/image" + i + ".png"), imgBytes);
+                logger.info("Wrote image{} to src/main/resources/image{}.png", i, i);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
