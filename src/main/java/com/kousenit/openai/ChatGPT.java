@@ -12,6 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 
 public class ChatGPT {
@@ -25,6 +26,25 @@ public class ChatGPT {
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
+
+    public void listModels() {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.openai.com/v1/models"))
+                .header("Authorization",
+                        "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofString());
+            ModelList modelList = gson.fromJson(response.body(), ModelList.class);
+            modelList.data().stream()
+                    .sorted(Comparator.comparing(ModelList.Model::created).reversed())
+                    .forEach(System.out::println);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public String getResponse(String prompt) {
         ChatRequest chatRequest = createChatRequest(prompt);
