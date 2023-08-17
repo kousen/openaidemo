@@ -32,15 +32,7 @@ public class ChatGPT {
         return chatResponse.choices().get(0).message().content();
     }
 
-    public String readFile(String fileName) {
-        try {
-            return Files.readString(Path.of(fileName));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public static ChatRequest createChatRequest(String prompt) {
+    public ChatRequest createChatRequest(String prompt) {
         return new ChatRequest(MODEL,
                 List.of(new Message(Role.USER, prompt)),
                 0.7);
@@ -63,4 +55,11 @@ public class ChatGPT {
         }
     }
 
+    public String readFile(String fileName) {
+        try {
+            return Files.readString(Path.of(fileName));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 }
