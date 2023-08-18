@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 // See docs at https://picogen.io/docs
+@SuppressWarnings("unused")
 public class Picogen {
     private static final Logger logger = LoggerFactory.getLogger(Picogen.class);
     private static final String BASEURL = "https://api.picogen.io";
@@ -159,8 +160,9 @@ public class Picogen {
     public static void main(String[] args) {
         Picogen picogen = new Picogen();
         String prompt = """
-                Happy kitten on Babylon 5 space station""";
-        // picogen.midjourneyRequest(prompt);
-        picogen.stabilityRequest(prompt);
+                Batman and Robin playing Fortnight
+                on the Batcomputer in the Batcave""";
+        picogen.midjourneyRequest(prompt);
+        // picogen.stabilityRequest(prompt);
     }
 }

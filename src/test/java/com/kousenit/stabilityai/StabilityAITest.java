@@ -21,7 +21,8 @@ class StabilityAITest {
     @Test @Disabled("Requires credits to run")
     void sampleImage() {
         stabilityAI.generateImages("""
-                Batman and Robin playing Fortnight on the Bat-computer
+                Captain Kirk fights Darth Vader with a lightsaber
+                on the bridge of the Starship Enterprise.
                 """);
     }
 }

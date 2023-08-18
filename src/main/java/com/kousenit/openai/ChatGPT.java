@@ -17,8 +17,8 @@ import java.util.List;
 
 public class ChatGPT {
     private static final String CHAT_URL = "https://api.openai.com/v1/chat/completions";
-    //private final static String MODEL = "gpt-3.5-turbo";
-    private final static String MODEL = "gpt-4";
+    private final static String MODEL = "gpt-3.5-turbo";
+    // private final static String MODEL = "gpt-4";
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
