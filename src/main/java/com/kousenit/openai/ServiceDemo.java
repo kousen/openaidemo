@@ -16,6 +16,7 @@ public class ServiceDemo {
     public static void main(String[] args) throws IOException, InterruptedException {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(Role.class, new LowercaseEnumSerializer())
                 .create();
 
         ChatRequest chatRequest = new ChatRequest("gpt-3.5-turbo",
