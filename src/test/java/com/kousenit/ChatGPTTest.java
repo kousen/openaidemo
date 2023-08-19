@@ -1,12 +1,14 @@
 package com.kousenit;
 
 import com.kousenit.openai.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -33,6 +35,23 @@ class ChatGPTTest {
                     """;
         String response = chat.getResponse(prompt);
         System.out.println(response);
+    }
+
+    @Test
+    void run_from_provided_request() {
+        Message userMessage = new Message(Role.USER,
+                """
+                What is the Ultimate Answer to
+                the Ultimate Question of Life,
+                the Universe, and Everything?
+                """);
+        ChatRequest request = new ChatRequest("gpt-3.5-turbo",
+                List.of(userMessage), 0.7);
+        ChatResponse response = chat.createChatResponse(request);
+        System.out.println(response.usage());
+        String result = response.choices().get(0).message().content();
+        System.out.println(result);
+        assertThat(result).contains("42");
     }
 
     @Test

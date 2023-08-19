@@ -1,6 +1,8 @@
 package com.kousenit.picogen;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -18,12 +20,15 @@ public class ImageDownloader extends Application {
         launch(args);
     }
 
+    // NOTE: Execute this from the "./gradlew run" command
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException, URISyntaxException {
         List<String> jobList = picogen.getJobList();
 
         // URL of image to download
-        URL url = new URL(jobList.get(0));
+        // NOTE: URL constructor is deprecated in Java 20. Replacing with
+        // URI.toURL(String) to prepare for Java 21.
+        URL url = new URI(jobList.get(0)).toURL();
 
         // Download image from URL
         Image image = new Image(url.openStream());
