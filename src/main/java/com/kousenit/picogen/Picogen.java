@@ -140,18 +140,15 @@ public class Picogen {
     }
 
     public void midjourneyRequest(String prompt) {
-        MidjourneyRequest jobRequest = RequestFactory.createMidjourneyJobRequest(
-                prompt,
-                "mj-5.2");
+        MidjourneyRequest jobRequest =
+                RequestFactory.createMidjourneyJobRequest(prompt, "mj-5.2");
         JobResponse jobResponse = doMidjourneyJob(jobRequest);
         GetResponse response = waitForResponseCompletion(jobResponse);
         response.result().forEach(System.out::println);
     }
 
     public void stabilityRequest(String prompt) {
-        StabilityRequest jobRequest = RequestFactory.createStabilityJobRequest(
-                prompt,
-                "xl-v1.0");
+        StabilityRequest jobRequest = RequestFactory.createStabilityJobRequest(prompt, "xl-v1.0");
         JobResponse jobResponse = doStabilityJob(jobRequest);
         GetResponse response = waitForResponseCompletion(jobResponse);
         response.result().forEach(System.out::println);

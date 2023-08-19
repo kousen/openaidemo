@@ -24,8 +24,14 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
+tasks.withType<JavaCompile>().forEach {
+    it.options.compilerArgs.plusAssign("--enable-preview")
+}
+
 tasks.test {
+    jvmArgs("--enable-preview")
     useJUnitPlatform()
+    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2 + 1
 }
 
 javafx {

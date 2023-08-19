@@ -36,10 +36,11 @@ public class RequestFactory {
     }
 
     // Need to wait until Java 21 to use pattern matching with switch
-//    public static ImageRequest createImageRequest(ImageRequest request, String prompt, String engine) {
-//        return switch (request) {
-//            case StabilityRequest stabilityRequest -> createStabilityJobRequest(prompt, engine);
-//            case MidjourneyRequest midjourneyRequest -> createMidjourneyJobRequest(prompt, engine);
-//        };
-//    }
+    public static ImageRequest createImageRequest(
+            ImageRequest request, String prompt, String engine) {
+        return switch (request) {
+            case StabilityRequest stabilityRequest -> createStabilityJobRequest(prompt, engine);
+            case MidjourneyRequest midjourneyRequest -> createMidjourneyJobRequest(prompt, engine);
+        };
+    }
 }
