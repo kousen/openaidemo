@@ -43,7 +43,8 @@ public class GenerateQuiz {
                         "Concurrent Collections",
                         "Traditional JDBC Classes",
                         "The java.time Package")
-                .parallelStream().forEach(this::sendMessage);
+                .parallelStream()
+                .forEach(this::sendMessage);
     }
 
     private void sendMessage(String topic) {
