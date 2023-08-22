@@ -160,7 +160,7 @@ public class Picogen {
     public static void main(String[] args) {
         Picogen picogen = new Picogen();
         String prompt = """
-                Batman and Robin playing Fortnight
+                Batman and Robin playing Fortnite
                 on the Batcomputer in the Batcave""";
         picogen.midjourneyRequest(prompt);
         // picogen.stabilityRequest(prompt);
