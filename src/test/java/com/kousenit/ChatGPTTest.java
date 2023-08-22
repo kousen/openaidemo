@@ -1,7 +1,6 @@
 package com.kousenit;
 
 import com.kousenit.openai.*;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -55,12 +54,6 @@ class ChatGPTTest {
     }
 
     @Test
-    void read_file() {
-        String data = chat.readFile("src/main/resources/graal.srt");
-        System.out.println(data.length());
-    }
-
-    @Test
     void generate_quiz_questions_from_transcript() {
         Message systemMessage = new Message(Role.SYSTEM, """
                 You are a Java instructor who recorded a video course,
@@ -82,7 +75,7 @@ class ChatGPTTest {
                 again labeled A through D.
                 """);
         Message userMessage = new Message(Role.USER,
-                chat.readFile("src/main/resources/graal.srt"));
+                FileUtils.readFile("src/main/resources/graal.srt"));
         ChatRequest request = new ChatRequest("gpt-3.5-turbo",
                 List.of(systemMessage, userMessage),
                 0.7);

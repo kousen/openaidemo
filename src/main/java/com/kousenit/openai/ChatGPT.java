@@ -5,13 +5,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
@@ -75,11 +72,4 @@ public class ChatGPT {
         }
     }
 
-    public String readFile(String fileName) {
-        try {
-            return Files.readString(Path.of(fileName));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
 }
