@@ -61,8 +61,10 @@ class ChatGPTTest {
                 
                 The next message contains the transcript of a video
                 from the course about using the GraalVM native-image tool
-                to create a native executable from a Java program.
-                
+                to create a native executable from a Java program.""");
+
+        Message quizMessage = new Message(Role.USER,
+                """                
                 Create a multiple-choice quiz about the text.
                 The quiz should have three questions with four
                 possible answers each, with only one correct
@@ -74,10 +76,12 @@ class ChatGPTTest {
                 After that, add a section that explains all the answers,
                 again labeled A through D.
                 """);
-        Message userMessage = new Message(Role.USER,
+
+        Message fileMessage = new Message(Role.SYSTEM,
                 FileUtils.readFile("src/main/resources/graal.srt"));
+
         ChatRequest request = new ChatRequest("gpt-3.5-turbo",
-                List.of(systemMessage, userMessage),
+                List.of(systemMessage, fileMessage, quizMessage),
                 0.7);
         ChatResponse response = chat.createChatResponse(request);
         System.out.println(response.usage());

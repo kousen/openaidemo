@@ -14,8 +14,8 @@ import java.util.List;
 
 public class ChatGPT {
     private static final String CHAT_URL = "https://api.openai.com/v1/chat/completions";
+    private static final String MODELS_URL = "https://api.openai.com/v1/models";
     private final static String MODEL = "gpt-3.5-turbo";
-    // private final static String MODEL = "gpt-4";
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -26,7 +26,7 @@ public class ChatGPT {
 
     public void listModels() {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.openai.com/v1/models"))
+                .uri(URI.create(MODELS_URL))
                 .header("Authorization",
                         "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
                 .GET()
