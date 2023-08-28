@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class QuizGeneratorDemo {
+public class AsyncQuizGeneratorDemo {
     private final HttpClient client = HttpClient.newHttpClient();
 
     private final Message systemMessage = new Message(Role.SYSTEM, """
@@ -75,8 +75,8 @@ public class QuizGeneratorDemo {
     private CompletableFuture<Void> getAsyncResponse(String topic, HttpRequest request) {
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenApply(body -> gson.fromJson(body, ChatResponse.class))
-                .thenAccept(response -> writeResponseToFile(topic, response));
+                .thenApplyAsync(body -> gson.fromJson(body, ChatResponse.class))
+                .thenAcceptAsync(response -> writeResponseToFile(topic, response));
     }
 
     private static void writeResponseToFile(String topic, ChatResponse response) {
@@ -86,8 +86,7 @@ public class QuizGeneratorDemo {
             Files.writeString(
                     Path.of("build/resources/main/%s.txt".formatted(topic)),
                     questions,
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.APPEND);
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -103,7 +102,7 @@ public class QuizGeneratorDemo {
     }
 
     public static void main(String[] args) {
-        QuizGeneratorDemo demo = new QuizGeneratorDemo();
+        AsyncQuizGeneratorDemo demo = new AsyncQuizGeneratorDemo();
         demo.doAsyncRequests();
     }
 }
