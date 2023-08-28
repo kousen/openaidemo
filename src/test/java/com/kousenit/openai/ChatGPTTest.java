@@ -1,6 +1,5 @@
-package com.kousenit;
+package com.kousenit.openai;
 
-import com.kousenit.openai.*;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
