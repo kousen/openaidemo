@@ -19,7 +19,6 @@ public class ChatGPT {
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            // .registerTypeAdapter(Role.class, new RoleTypeAdapter())
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
