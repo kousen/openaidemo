@@ -1,10 +1,14 @@
 package com.kousenit.openai;
 
-public enum Role {
-    USER, SYSTEM, ASSISTANT;
+import com.google.gson.annotations.SerializedName;
 
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
+public enum Role {
+    @SerializedName("user")
+    USER,
+
+    @SerializedName("system")
+    SYSTEM,
+
+    @SerializedName("assistant")
+    ASSISTANT
 }

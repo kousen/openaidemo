@@ -19,7 +19,7 @@ public class ChatGPT {
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(Role.class, new LowercaseEnumSerializer())
+            // .registerTypeAdapter(Role.class, new RoleTypeAdapter())
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
@@ -66,6 +66,7 @@ public class ChatGPT {
         try {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode() + ": " + response.body());
             return gson.fromJson(response.body(), ChatResponse.class);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
