@@ -13,6 +13,8 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.Random;
 
 public class DallE {
     private static final String URL = "https://api.openai.com/v1/images/generations";
@@ -23,15 +25,18 @@ public class DallE {
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    public String getResponse(String prompt) {
-        ImagePrompt request = createImageRequest(prompt, 1, "1024x1024");
+    public int getSingleImage(String prompt) {
+        ImageRequest request = new ImageRequest(prompt, 1, "1024x1024");
         ImageResponse response = sendImagePrompt(request);
-        String url = response.data()[0].url();
-        writeImageToFile(url);
-        return url;
+        Arrays.stream(response.data())
+                .map(Image::url)
+                .forEach(this::writeImageToFile);
+        return response.data().length;
     }
 
     private void writeImageToFile(String url) {
+        Random random = new Random();
+        String fileName = "image%d.png".formatted(random.nextInt());
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -39,24 +44,21 @@ public class DallE {
         HttpResponse<InputStream> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-            Files.copy(response.body(), Paths.get("src/main/resources/image.png"),
+            Files.copy(response.body(), Paths.get("src/main/resources", fileName),
                     StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Wrote " + fileName + " to src/main/resources");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ImagePrompt createImageRequest(String prompt, int n, String size) {
-        return new ImagePrompt(prompt, n, size);
-    }
-
-    public ImageResponse sendImagePrompt(ImagePrompt imagePrompt) {
+    public ImageResponse sendImagePrompt(ImageRequest imageRequest) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(URL))
                 .header("Authorization",
                         "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(imagePrompt)))
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(imageRequest)))
                 .build();
         try {
             HttpResponse<String> response =

@@ -9,14 +9,11 @@ class DallETest {
     @Test
     public void testDallE() {
         DallE dallE = new DallE();
-        String url = dallE.getResponse("""
-                A penguin wearing a sombrero
-                uses the Force to raise a sunken ship
-                from the ocean floor in the Bermuda Triangle.
+        int num = dallE.getSingleImage("""
+                A photo of a penguin wearing a Batman suit
+                fighting crime in the Antarctic
                 """);
-        System.out.println("Downloaded image from " + url +
-                           " is stored in src/main/resources/image.png");
-        assertThat(url).hasSizeGreaterThan(0);
+        assertThat(num).isPositive();
     }
 
 }
