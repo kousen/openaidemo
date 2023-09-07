@@ -1,4 +1,4 @@
-package com.kousenit.openai;
+package com.kousenit.openai.json;
 
 // prompt has max length of 1000 characters
 // n defaults to 1, which happens if n is null. Otherwise must be between 1 and 10.

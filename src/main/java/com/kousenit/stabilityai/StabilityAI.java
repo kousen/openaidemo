@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kousenit.openai.LowercaseEnumSerializer;
 import com.kousenit.openai.Role;
+import com.kousenit.stabilityai.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

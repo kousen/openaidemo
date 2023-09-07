@@ -1,5 +1,8 @@
 package com.kousenit.openai;
 
+import com.kousenit.openai.json.ChatRequest;
+import com.kousenit.openai.json.ChatResponse;
+import com.kousenit.openai.json.Message;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

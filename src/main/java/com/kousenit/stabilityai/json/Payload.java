@@ -1,4 +1,6 @@
-package com.kousenit.stabilityai;
+package com.kousenit.stabilityai.json;
+
+import com.kousenit.stabilityai.TextPrompt;
 
 import java.util.List;
 
