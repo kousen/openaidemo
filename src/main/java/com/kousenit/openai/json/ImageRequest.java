@@ -7,5 +7,5 @@ package com.kousenit.openai.json;
 public record ImageRequest(String prompt,
                            Integer n,
                            String size,
-                           String response_format) {
+                           String responseFormat) {
 }
