@@ -9,7 +9,7 @@ class DallETest {
     @Test
     public void testDallE() {
         DallE dallE = new DallE();
-        int num = dallE.getImages("""
+        long num = dallE.getImages("""
                 A realistic photo of a
                 robot leaping into the air
                 in joy after accomplishing a
