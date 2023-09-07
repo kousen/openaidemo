@@ -34,10 +34,10 @@ public class DallE {
         ImageRequest request = new ImageRequest(
                 prompt, numberOfImages, "512x512", "b64_json");
         ImageResponse response = sendImagePrompt(request);
-        response.data().stream()
-                .map(Image::b64_json)
-                .forEach(this::writeImageToFile);
-        return numberOfImages;
+        return (int) response.data().stream()
+                .map(Image::b64Json)
+                .filter(this::writeImageToFile)
+                .count();
     }
 
     public ImageResponse sendImagePrompt(ImageRequest imageRequest) {
@@ -52,7 +52,7 @@ public class DallE {
         }
     }
 
-    private void writeImageToFile(String imageData) {
+    private boolean writeImageToFile(String imageData) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String fileName = String.format("image_%s_%d.png", timestamp, counter++);
         Path directory = Paths.get("src/main/resources");
@@ -62,6 +62,7 @@ public class DallE {
             byte[] bytes = Base64.getDecoder().decode(imageData);
             Files.write(filePath, bytes, StandardOpenOption.CREATE_NEW);
             System.out.printf("Saved %s to src/main/resources%n", fileName);
+            return true;
         } catch (IOException e) {
             throw new RuntimeException("Error writing image to file", e);
         }
