@@ -33,7 +33,13 @@ public class DallE {
     }
 
     public ImageResponse sendImagePrompt(ImageRequest imageRequest) {
-        HttpRequest request = createRequest(gson.toJson(imageRequest));
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(DallE.URL))
+                .header("Authorization", "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(imageRequest)))
+                .build();
         try {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -42,14 +48,5 @@ public class DallE {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Error sending image prompt", e);
         }
-    }
-
-    private HttpRequest createRequest(String json) {
-        return HttpRequest.newBuilder()
-                .uri(URI.create(DallE.URL))
-                .header("Authorization", "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
     }
 }
