@@ -35,5 +35,6 @@ javafx {
 }
 
 application {
-    mainClass.set("com.kousenit.picogen.ImageDownloader")
+    // mainClass.set("com.kousenit.picogen.ImageDownloader")
+    mainClass.set("com.kousenit.openai.ImageCarousel")
 }
