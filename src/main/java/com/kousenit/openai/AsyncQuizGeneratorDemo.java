@@ -3,6 +3,9 @@ package com.kousenit.openai;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kousenit.openai.json.ChatRequest;
+import com.kousenit.openai.json.ChatResponse;
+import com.kousenit.openai.json.Message;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -1,4 +1,4 @@
-package com.kousenit.openai;
+package com.kousenit.openai.json;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

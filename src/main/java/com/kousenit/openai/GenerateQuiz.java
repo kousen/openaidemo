@@ -1,5 +1,9 @@
 package com.kousenit.openai;
 
+import com.kousenit.openai.json.ChatRequest;
+import com.kousenit.openai.json.ChatResponse;
+import com.kousenit.openai.json.Message;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;

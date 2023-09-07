@@ -1,5 +1,7 @@
 package com.kousenit.stabilityai;
 
+import com.kousenit.stabilityai.json.Balance;
+import com.kousenit.stabilityai.json.Engines;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

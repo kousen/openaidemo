@@ -1,4 +1,4 @@
-package com.kousenit.stabilityai;
+package com.kousenit.stabilityai.json;
 
 public record Balance(double credits) {
 }

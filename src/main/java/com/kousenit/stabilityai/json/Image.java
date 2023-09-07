@@ -1,4 +1,4 @@
-package com.kousenit.stabilityai;
+package com.kousenit.stabilityai.json;
 
 // base64: image data encoded in base64
 // finishReason: CONTENT_FILTERED, ERROR, SUCCESS
