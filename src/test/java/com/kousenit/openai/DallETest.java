@@ -16,6 +16,7 @@ class DallETest {
                 difficult task successfully
                 """, 2);
         assertThat(num).isPositive();
+        System.out.printf("Downloaded %d images%n", num);
     }
 
 }
