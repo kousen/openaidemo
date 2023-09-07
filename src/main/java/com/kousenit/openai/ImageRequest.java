@@ -6,5 +6,6 @@ package com.kousenit.openai;
 // NOTE: response_format can be "url" or "b64_json". Default is url.
 public record ImageRequest(String prompt,
                            Integer n,
-                           String size) {
+                           String size,
+                           String response_format) {
 }
