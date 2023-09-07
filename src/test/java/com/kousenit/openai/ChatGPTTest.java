@@ -43,8 +43,10 @@ class ChatGPTTest {
                 the Ultimate Question of Life,
                 the Universe, and Everything?
                 """);
-        ChatRequest request = new ChatRequest("gpt-3.5-turbo",
-                List.of(userMessage), 0.7);
+        ChatRequest request = new ChatRequest(
+                "gpt-3.5-turbo",
+                List.of(userMessage),
+                0.7);
         ChatResponse response = chat.createChatResponse(request);
         System.out.println(response.usage());
         String result = response.choices().get(0).message().content();

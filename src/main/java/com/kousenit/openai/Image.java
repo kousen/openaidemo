@@ -1,4 +1,4 @@
 package com.kousenit.openai;
 
-public record Image(String url) {
+public record Image(String b64_json) {
 }

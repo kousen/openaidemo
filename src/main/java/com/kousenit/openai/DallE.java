@@ -5,19 +5,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.Random;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 
 public class DallE {
     private static final String URL = "https://api.openai.com/v1/images/generations";
+    private int counter = 1;
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -25,49 +27,49 @@ public class DallE {
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    public int getSingleImage(String prompt) {
-        ImageRequest request = new ImageRequest(prompt, 1, "1024x1024");
+    public int getImages(String prompt, int numberOfImages) {
+        ImageRequest request = new ImageRequest(
+                prompt, numberOfImages, "512x512", "b64_json");
         ImageResponse response = sendImagePrompt(request);
-        Arrays.stream(response.data())
-                .map(Image::url)
+        response.data().stream()
+                .map(Image::b64_json)
                 .forEach(this::writeImageToFile);
-        return response.data().length;
-    }
-
-    private void writeImageToFile(String url) {
-        Random random = new Random();
-        String fileName = "image%d.png".formatted(random.nextInt());
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .build();
-        HttpResponse<InputStream> response;
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-            Files.copy(response.body(), Paths.get("src/main/resources", fileName),
-                    StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Wrote " + fileName + " to src/main/resources");
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        return numberOfImages;
     }
 
     public ImageResponse sendImagePrompt(ImageRequest imageRequest) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(URL))
-                .header("Authorization",
-                        "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(imageRequest)))
-                .build();
+        HttpRequest request = createRequest(gson.toJson(imageRequest));
         try {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode() + ": " + response.body());
+            System.out.println("Status: " + response.statusCode());
             return gson.fromJson(response.body(), ImageResponse.class);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error sending image prompt", e);
         }
     }
 
+    private void writeImageToFile(String imageData) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String fileName = String.format("image_%s_%d.png", timestamp, counter++);
+        Path directory = Paths.get("src/main/resources");
+        Path filePath = directory.resolve(fileName);
+        try {
+            Files.createDirectories(directory);
+            byte[] bytes = Base64.getDecoder().decode(imageData);
+            Files.write(filePath, bytes, StandardOpenOption.CREATE_NEW);
+            System.out.printf("Saved %s to src/main/resources%n", fileName);
+        } catch (IOException e) {
+            throw new RuntimeException("Error writing image to file", e);
+        }
+    }
+
+    private HttpRequest createRequest(String json) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(DallE.URL))
+                .header("Authorization", "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+    }
 }
