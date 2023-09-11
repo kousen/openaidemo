@@ -1,5 +1,6 @@
 package com.kousenit.picogen;
 
+import com.kousenit.picogen.json.JobResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

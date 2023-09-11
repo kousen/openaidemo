@@ -1,8 +1,8 @@
-package com.kousenit.picogen;
+package com.kousenit.picogen.json;
 
 import java.util.List;
 
-// Full Job response, which includes a List<GetResponse> as "items":
+// Full Job response, which includes a List<Item> as "items":
 // [
 //    null,
 //    {
@@ -47,9 +47,9 @@ import java.util.List;
 //]
 
 // status:  'created', 'processing', 'completed', or 'error'
-public record GetResponse(long id, long accountId, long tokenId, long transactionId,
-                          String status, Payload payload, List<String> result, int durationMs,
-                          long createdAt, long updatedAt) {
+public record Item(long id, long accountId, long tokenId, long transactionId,
+                   String status, Payload payload, List<String> result, int durationMs,
+                   long createdAt, long updatedAt) {
     public record Payload(Options options, String model, String command, int version){
         public record Options(String size, String style,
                               String engine, String prompt) {}
