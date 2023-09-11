@@ -1,7 +1,5 @@
 package com.kousenit.stabilityai.json;
 
-import com.kousenit.stabilityai.TextPrompt;
-
 import java.util.List;
 
 // From https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage:

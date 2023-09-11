@@ -56,7 +56,7 @@ public class ImageCarousel extends Application {
     }
 
     private void loadImages() {
-        Path path = Paths.get("src/main/resources");
+        Path path = Paths.get("src/main/resources/images");
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*.png")) {
             for (Path entry : stream) {
                 try (InputStream is = new FileInputStream(entry.toString())) {
