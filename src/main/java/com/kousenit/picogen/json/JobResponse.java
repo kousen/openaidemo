@@ -1,4 +1,4 @@
-package com.kousenit.picogen;
+package com.kousenit.picogen.json;
 
 // [
 //    null,

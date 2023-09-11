@@ -50,7 +50,6 @@ public class StabilityAI {
                 "/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image",
                         gson.toJson(payload), Artifacts.class);
 
-        // writeResponseToFile(response);
         long count = response.artifacts().stream()
                 .map(Image::base64)
                 .filter(FileUtils::writeImageToFile)

@@ -25,6 +25,9 @@ package com.kousenit.picogen;
 //                  niji-5-cute, niji-5-expressive, niji-5-original, niji-5-scenic
 //      Not allowed for dalle2
 
+import com.kousenit.picogen.json.MidjourneyRequest;
+import com.kousenit.picogen.json.StabilityRequest;
+
 public class RequestFactory {
     public static StabilityRequest createStabilityJobRequest(String prompt, String engine) {
         return new StabilityRequest(1, "stability", "generate", prompt,

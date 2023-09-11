@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.kousenit.picogen.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,14 +81,14 @@ public class Picogen {
                     .filter(Objects::nonNull)
                     .flatMap(listResponse -> listResponse.items().stream())
                     .filter(items -> items.status().equals("completed"))
-                    .map(getResponse -> getResponse.result().get(0))
+                    .map(item -> item.result().get(0))
                     .collect(Collectors.toList());
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public GetResponse getResponse(JobResponse jobResponse) {
+    public Item getResponse(JobResponse jobResponse) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASEURL + "/job/get/" + jobResponse.id()))
                 .header("API-Token", System.getenv("PICOGEN_API_KEY"))
@@ -100,12 +101,12 @@ public class Picogen {
             String string = response.body();
             logger.info("Server response: " + string); // Keep this line for debugging
 
-            // Parse the response as a List of GetResponse
-            List<GetResponse> getResponses = gson.fromJson(string,
-                    new TypeToken<List<GetResponse>>(){}.getType());
+            // Parse the response as a List of Item
+            List<Item> getRespons = gson.fromJson(string,
+                    new TypeToken<List<Item>>(){}.getType());
 
             // Get the first non-null response
-            return getResponses.stream()
+            return getRespons.stream()
                     .filter(Objects::nonNull)
                     .findFirst().orElseThrow(() -> new RuntimeException("No valid response"));
         } catch (IOException | InterruptedException e) {
@@ -113,22 +114,18 @@ public class Picogen {
         }
     }
 
-    public GetResponse waitForResponseCompletion(JobResponse jobResponse) {
-        GetResponse response = getResponse(jobResponse);
+    public Item waitForResponseCompletion(JobResponse jobResponse) {
+        Item response = getResponse(jobResponse);
         if (response.status().equals("error")) {
             throw new RuntimeException("Error: " + response);
         }
-        while (!isResponseCompleted(response)) {
+        while (!response.status().equals(COMPLETED_STATUS)) {
             // logger.info(response.status() + "...");
             sleepInterruptibly();
             response = getResponse(jobResponse);
         }
         logger.info("Completed in " + (response.durationMs() / 1000) + " seconds");
         return response;
-    }
-
-    private boolean isResponseCompleted(GetResponse response) {
-        return response.status().equals(COMPLETED_STATUS);
     }
 
     private void sleepInterruptibly() {
@@ -144,7 +141,7 @@ public class Picogen {
                 prompt,
                 "mj-5.2");
         JobResponse jobResponse = doMidjourneyJob(jobRequest);
-        GetResponse response = waitForResponseCompletion(jobResponse);
+        Item response = waitForResponseCompletion(jobResponse);
         response.result().forEach(System.out::println);
     }
 
@@ -153,7 +150,7 @@ public class Picogen {
                 prompt,
                 "xl-v1.0");
         JobResponse jobResponse = doStabilityJob(jobRequest);
-        GetResponse response = waitForResponseCompletion(jobResponse);
+        Item response = waitForResponseCompletion(jobResponse);
         response.result().forEach(System.out::println);
     }
 
