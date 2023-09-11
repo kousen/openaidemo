@@ -3,25 +3,19 @@ package com.kousenit.stabilityai;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kousenit.openai.FileUtils;
 import com.kousenit.openai.LowercaseEnumSerializer;
 import com.kousenit.openai.Role;
 import com.kousenit.stabilityai.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 
 public class StabilityAI {
@@ -46,18 +40,22 @@ public class StabilityAI {
         return new Engines(Arrays.asList(enginesArray));
     }
 
-    public void generateImages(String prompt) {
+    public void generateImages(String prompt, int numberOfImages) {
         Payload payload = new Payload(
                 7, "NONE", "photographic",
-                1024, 1024, 1, 40,
+                1024, 1024, numberOfImages, 40,
                 List.of(new TextPrompt(prompt, 1)));
 
         Artifacts response = makePostRequest(
                 "/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image",
                         gson.toJson(payload), Artifacts.class);
 
-        writeResponseToFile(response);
-        saveImages(response.artifacts());
+        // writeResponseToFile(response);
+        long count = response.artifacts().stream()
+                .map(Image::base64)
+                .filter(FileUtils::writeImageToFile)
+                .count();
+        logger.info("Wrote {} images to src/main/resources/images", count);
     }
 
     private <T> T makeGetRequest(String endpoint, Class<T> type) {
@@ -67,8 +65,12 @@ public class StabilityAI {
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
-
-        return sendRequest(request, type);
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return gson.fromJson(response.body(), type);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -79,42 +81,11 @@ public class StabilityAI {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
-
-        return sendRequest(request, type);
-    }
-
-    private <T> T sendRequest(HttpRequest request, Class<T> type) {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return gson.fromJson(response.body(), type);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private void writeResponseToFile(Artifacts response) {
-        try {
-            Files.copy(
-                    new ByteArrayInputStream(response.toString().getBytes()),
-                    Path.of("src/main/resources/response.json"),
-                    StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void saveImages(List<Image> images) {
-        images.forEach(this::writeImage);
-    }
-
-    private void writeImage(Image image) {
-        try {
-            byte[] imgBytes = Base64.getDecoder().decode(image.base64());
-            Files.write(Paths.get(
-                    "src/main/resources/image" + image.seed() + ".png"), imgBytes);
-            logger.info("Wrote image to src/main/resources/image{}.png", image.seed());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 }

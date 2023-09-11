@@ -24,13 +24,13 @@ public class FileUtils {
     public static boolean writeImageToFile(String imageData) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String fileName = String.format("image_%s_%d.png", timestamp, counter++);
-        Path directory = Paths.get("src/main/resources");
+        Path directory = Paths.get("src/main/resources/images");
         Path filePath = directory.resolve(fileName);
         try {
             Files.createDirectories(directory);
             byte[] bytes = Base64.getDecoder().decode(imageData);
             Files.write(filePath, bytes, StandardOpenOption.CREATE_NEW);
-            System.out.printf("Saved %s to src/main/resources%n", fileName);
+            System.out.printf("Saved %s to src/main/resources/images%n", fileName);
             return true;
         } catch (IOException e) {
             throw new UncheckedIOException("Error writing image to file", e);
