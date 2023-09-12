@@ -20,6 +20,9 @@ import java.util.List;
 
 public class StabilityAI {
     private static final String BASE_URL = "https://api.stability.ai";
+    private static final String SDXL_ENGINE = "stable-diffusion-xl-1024-v1-0";
+    private static final String KEY = System.getenv("STABILITY_API_KEY");
+
     private final Logger logger = LoggerFactory.getLogger(StabilityAI.class);
 
     private final Gson gson = new GsonBuilder()
@@ -29,7 +32,7 @@ public class StabilityAI {
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
-    private final String authHeader = "Bearer %s".formatted(System.getenv("STABILITY_API_KEY"));
+    private final String authHeader = "Bearer %s".formatted(KEY);
 
     public Balance getBalance() {
         return makeGetRequest("/v1/user/balance", Balance.class);
@@ -47,10 +50,11 @@ public class StabilityAI {
                 List.of(new TextPrompt(prompt, 1)));
 
         Artifacts response = makePostRequest(
-                "/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image",
+                "/v1/generation/%s/text-to-image".formatted(SDXL_ENGINE),
                         gson.toJson(payload), Artifacts.class);
 
         long count = response.artifacts().stream()
+                .filter(image -> image.finishReason().equals("SUCCESS"))
                 .map(Image::base64)
                 .filter(FileUtils::writeImageToFile)
                 .count();

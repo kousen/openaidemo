@@ -4,8 +4,11 @@ package com.kousenit.stabilityai.json;
 // finishReason: CONTENT_FILTERED, ERROR, SUCCESS
 // seed: random seed used to generate the image
 
+import com.google.gson.annotations.SerializedName;
+
 public record Image(
         String base64,
+        @SerializedName("finishReason")
         String finishReason,
         long seed
 ) {}
