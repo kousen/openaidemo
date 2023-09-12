@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 public class FileUtils {
-    private static int counter = 1;
+    private static int counter;
 
     public static String readFile(String fileName) {
         try {
