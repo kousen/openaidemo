@@ -19,13 +19,13 @@ class StabilityAITest {
         engines.engines().forEach(System.out::println);
     }
 
-    @Test // @Disabled("Requires credits to run")
+    @Test
     void sampleImage() {
         stabilityAI.generateImages("""
-                A realistic photo of a
+                A realistic photo of a happy
                 robot leaping into the air
                 in joy after accomplishing a
-                difficult task successfully.
+                particularly difficult task.
                 """, 4);
     }
 }
