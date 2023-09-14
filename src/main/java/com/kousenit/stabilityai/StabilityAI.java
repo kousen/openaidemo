@@ -47,7 +47,7 @@ public class StabilityAI {
         Payload payload = new Payload(
                 7, "NONE", "photographic",
                 1024, 1024, numberOfImages, 40,
-                List.of(new TextPrompt(prompt, 1)));
+                List.of(new TextPrompt(prompt, 0.5)));
 
         Artifacts response = makePostRequest(
                 "/v1/generation/%s/text-to-image".formatted(SDXL_ENGINE),
@@ -86,7 +86,8 @@ public class StabilityAI {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofString());
             return gson.fromJson(response.body(), type);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
