@@ -26,6 +26,6 @@ class StabilityAITest {
                 robot leaping into the air
                 in joy after accomplishing a
                 difficult task successfully.
-                """, 2);
+                """, 4);
     }
 }
