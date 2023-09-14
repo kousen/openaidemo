@@ -5,10 +5,11 @@ package com.kousenit.stabilityai.json;
 // seed: random seed used to generate the image
 
 import com.google.gson.annotations.SerializedName;
+import com.kousenit.stabilityai.FinishReason;
 
 public record Image(
         String base64,
         @SerializedName("finishReason")
-        String finishReason,
+        FinishReason finishReason,
         long seed
 ) {}

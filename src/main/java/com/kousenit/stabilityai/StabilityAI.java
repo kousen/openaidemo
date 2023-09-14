@@ -54,7 +54,7 @@ public class StabilityAI {
                         gson.toJson(payload), Artifacts.class);
 
         long count = response.artifacts().stream()
-                .filter(image -> image.finishReason().equals("SUCCESS"))
+                .filter(image -> image.finishReason().equals(FinishReason.SUCCESS))
                 .map(Image::base64)
                 .filter(FileUtils::writeImageToFile)
                 .count();
@@ -65,7 +65,7 @@ public class StabilityAI {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + endpoint))
                 .header("Authorization", authHeader)
-                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .GET()
                 .build();
         try {
@@ -82,6 +82,7 @@ public class StabilityAI {
                 .uri(URI.create(BASE_URL + endpoint))
                 .header("Authorization", authHeader)
                 .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         try {
