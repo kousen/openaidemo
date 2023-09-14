@@ -10,19 +10,20 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.DirectoryStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ImageCarousel extends Application {
     private final StackPane root = new StackPane();
-    private final List<Image> images = new ArrayList<>();
+    private List<Image> images = loadImages();
     private final ImageView imageView = new ImageView();
     private Iterator<Image> imageIterator;
 
@@ -55,16 +56,25 @@ public class ImageCarousel extends Application {
         stage.show();
     }
 
-    private void loadImages() {
+    private List<Image> loadImages() {
         Path path = Paths.get("src/main/resources/images");
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*.png")) {
-            for (Path entry : stream) {
-                try (InputStream is = new FileInputStream(entry.toString())) {
-                    images.add(new Image(is));
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        try (Stream<Path> paths = Files.walk(path)) {
+            images = paths
+                    .filter(p -> p.toString().endsWith(".png"))
+                    .map(this::pathToImage)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return images;
+    }
+
+    private Image pathToImage(Path path) {
+        try (InputStream is = Files.newInputStream(path)) {
+            return new Image(is);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
