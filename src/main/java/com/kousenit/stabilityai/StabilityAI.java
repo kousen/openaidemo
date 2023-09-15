@@ -54,7 +54,7 @@ public class StabilityAI {
                         gson.toJson(payload), Artifacts.class);
 
         long count = response.artifacts().stream()
-                .filter(image -> image.finishReason().equals(FinishReason.SUCCESS))
+                .filter(image -> !image.finishReason().equals(FinishReason.ERROR))
                 .map(Image::base64)
                 .filter(FileUtils::writeImageToFile)
                 .count();
