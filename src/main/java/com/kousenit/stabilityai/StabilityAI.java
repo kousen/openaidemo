@@ -4,8 +4,6 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kousenit.openai.FileUtils;
-import com.kousenit.openai.LowercaseEnumSerializer;
-import com.kousenit.openai.Role;
 import com.kousenit.stabilityai.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +26,6 @@ public class StabilityAI {
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(Role.class, new LowercaseEnumSerializer())
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
