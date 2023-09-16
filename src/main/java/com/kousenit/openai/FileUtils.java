@@ -42,6 +42,7 @@ public class FileUtils {
         Path filePath = directory.resolve(fileName);
         try {
             Files.createDirectories(directory);
+            Files.deleteIfExists(filePath);
             Files.writeString(filePath, textData, StandardOpenOption.CREATE_NEW);
             System.out.printf("Saved %s to src/main/resources/text%n", fileName);
         } catch (IOException e) {
