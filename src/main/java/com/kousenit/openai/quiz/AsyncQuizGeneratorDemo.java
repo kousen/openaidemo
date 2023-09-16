@@ -1,8 +1,10 @@
-package com.kousenit.openai;
+package com.kousenit.openai.quiz;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kousenit.openai.LowercaseEnumSerializer;
+import com.kousenit.openai.Role;
 import com.kousenit.openai.json.ChatRequest;
 import com.kousenit.openai.json.ChatResponse;
 import com.kousenit.openai.json.Message;

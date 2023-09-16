@@ -1,4 +1,4 @@
-package com.kousenit.openai;
+package com.kousenit.openai.whisper;
 
 import org.junit.jupiter.api.Test;
 
