@@ -36,4 +36,16 @@ public class FileUtils {
             throw new UncheckedIOException("Error writing image to file", e);
         }
     }
+
+    public static void writeTextToFile(String textData, String fileName) {
+        Path directory = Paths.get("src/main/resources/text");
+        Path filePath = directory.resolve(fileName);
+        try {
+            Files.createDirectories(directory);
+            Files.writeString(filePath, textData, StandardOpenOption.CREATE_NEW);
+            System.out.printf("Saved %s to src/main/resources/text%n", fileName);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error writing text to file", e);
+        }
+    }
 }
