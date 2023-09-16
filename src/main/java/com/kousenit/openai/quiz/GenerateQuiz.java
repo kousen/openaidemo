@@ -1,5 +1,7 @@
-package com.kousenit.openai;
+package com.kousenit.openai.quiz;
 
+import com.kousenit.openai.ChatGPT;
+import com.kousenit.openai.Role;
 import com.kousenit.openai.json.ChatRequest;
 import com.kousenit.openai.json.ChatResponse;
 import com.kousenit.openai.json.Message;

@@ -1,8 +1,8 @@
-package com.kousenit.openai;
+package com.kousenit.openai.whisper;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WhisperAITest {
     private final static String SAMPLE_WAV_FILE = "src/main/resources/AssertJExceptions.wav";
