@@ -18,13 +18,20 @@ class ChatGPTTest {
 
     @Test
     void list_models() {
-        chat.listModels();
+        chat.listModels().forEach(System.out::println);
+    }
+
+    @Test
+    void list_gpt_models() {
+        chat.listModels().stream()
+                .filter(model -> model.id().contains("gpt"))
+                .forEach(System.out::println);
     }
 
     @Test
     void test_response_from_documentation() {
         String prompt = "Say this is a test!";
-        String response = chat.getResponse(prompt);
+        String response = chat.getResponse(prompt, ChatGPT.GPT_35_TURBO);
         assertEquals("This is a test!", response);
     }
 
@@ -34,7 +41,7 @@ class ChatGPTTest {
                     Suggest a name for a presentation about
                     AI tools for Java developers.
                     """;
-        String response = chat.getResponse(prompt);
+        String response = chat.getResponse(prompt, ChatGPT.GPT_4);
         System.out.println(response);
     }
 
@@ -47,7 +54,7 @@ class ChatGPTTest {
                 the Universe, and Everything?
                 """);
         ChatRequest request = new ChatRequest(
-                "gpt-3.5-turbo",
+                ChatGPT.GPT_35_TURBO,
                 List.of(userMessage),
                 0.7);
         ChatResponse response = chat.createChatResponse(request);
@@ -84,7 +91,7 @@ class ChatGPTTest {
         Message fileMessage = new Message(Role.SYSTEM,
                 FileUtils.readFile("src/main/resources/graal.srt"));
 
-        ChatRequest request = new ChatRequest("gpt-3.5-turbo",
+        ChatRequest request = new ChatRequest(ChatGPT.GPT_4,
                 List.of(systemMessage, fileMessage, quizMessage),
                 0.7);
         ChatResponse response = chat.createChatResponse(request);
