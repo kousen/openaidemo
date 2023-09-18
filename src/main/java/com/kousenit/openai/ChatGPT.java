@@ -19,7 +19,9 @@ import java.util.List;
 public class ChatGPT {
     private static final String CHAT_URL = "https://api.openai.com/v1/chat/completions";
     private static final String MODELS_URL = "https://api.openai.com/v1/models";
-    private final static String MODEL = "gpt-3.5-turbo";
+
+    public final static String GPT_35_TURBO = "gpt-3.5-turbo";
+    public final static String GPT_4 = "gpt-4";
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -27,7 +29,7 @@ public class ChatGPT {
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    public void listModels() {
+    public List<ModelList.Model> listModels() {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(MODELS_URL))
                 .header("Authorization",
@@ -38,22 +40,22 @@ public class ChatGPT {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
             ModelList modelList = gson.fromJson(response.body(), ModelList.class);
-            modelList.data().stream()
+            return modelList.data().stream()
                     .sorted(Comparator.comparing(ModelList.Model::created).reversed())
-                    .forEach(System.out::println);
+                    .toList();
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String getResponse(String prompt) {
-        ChatRequest chatRequest = createChatRequest(prompt);
+    public String getResponse(String prompt, String model) {
+        ChatRequest chatRequest = createChatRequest(prompt, model);
         ChatResponse chatResponse = createChatResponse(chatRequest);
         return chatResponse.choices().get(0).message().content();
     }
 
-    public ChatRequest createChatRequest(String prompt) {
-        return new ChatRequest(MODEL,
+    public ChatRequest createChatRequest(String prompt, String model) {
+        return new ChatRequest(model,
                 List.of(new Message(Role.USER, prompt)),
                 0.7);
     }
