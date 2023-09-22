@@ -29,7 +29,7 @@ public class WavFileSplitter {
                 int bytesRead = inputStream.read(buffer, 0, (int) (framesInThisFile * frameSize));
                 if (bytesRead > 0) {
                     File chunkFile = new File(sourceWavFile.getAbsolutePath().replace(
-                            ".wav", "-" + chunkCounter + ".wav"));
+                            ".wav", "-%d.wav".formatted(chunkCounter)));
                     try (var partStream = new AudioInputStream(
                             new ByteArrayInputStream(buffer, 0, bytesRead),
                             format,

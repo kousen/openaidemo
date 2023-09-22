@@ -76,7 +76,7 @@ public class WhisperAI {
             transcriptions.add(transcription);
         } else {
             String prompt = WORD_LIST;
-            WavFileSplitter splitter = new WavFileSplitter();
+            var splitter = new WavFileSplitter();
             List<File> chunks = splitter.splitWavFileIntoChunks(file);
             for (File chunk : chunks) {
                 prompt = transcribeChunk(prompt, chunk);
