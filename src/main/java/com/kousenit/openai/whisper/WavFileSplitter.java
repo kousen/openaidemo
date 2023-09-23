@@ -13,10 +13,15 @@ public class WavFileSplitter {
         List<File> chunks = new ArrayList<>();
         int chunkCounter = 1;
 
+        if (!sourceWavFile.exists()) {
+            throw new IllegalArgumentException("Source file not found at: " + sourceWavFile.getAbsolutePath());
+        }
+
         try (var inputStream = AudioSystem.getAudioInputStream(sourceWavFile)) {
             long totalFrames = inputStream.getFrameLength(); // Total frames in the source wav file
             AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(sourceWavFile);
             AudioFormat format = fileFormat.getFormat();
+            System.out.println("Source file format: " + format);
 
             // Calculate the maximum number of frames for each chunk
             int frameSize = format.getFrameSize(); // Number of bytes in each frame
