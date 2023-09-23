@@ -70,23 +70,34 @@ public class WhisperAI {
 
     public boolean transcribe(String fileName) {
         File file = new File(fileName);
+
+        // Collect the transcriptions of each chunk
         List<String> transcriptions = new ArrayList<>();
+
+        // First prompt is the word list
+        String prompt = WORD_LIST;
+
         if (file.length() <= MAX_CHUNK_SIZE_BYTES) {
-            String transcription = transcribeChunk(WORD_LIST, file);
+            String transcription = transcribeChunk(prompt, file);
             transcriptions.add(transcription);
         } else {
-            String prompt = WORD_LIST;
             var splitter = new WavFileSplitter();
             List<File> chunks = splitter.splitWavFileIntoChunks(file);
             for (File chunk : chunks) {
+                // Subsequent prompts are the previous transcriptions
                 prompt = transcribeChunk(prompt, chunk);
                 transcriptions.add(prompt);
+
+                // After transcribing, no longer need the individual chunks
                 if(!chunk.delete()) {
                     System.out.println("Failed to delete " + chunk.getName());
                 }
             }
         }
-        String fileNameWithoutPath = fileName.substring(fileName.lastIndexOf("/") + 1);
+
+        // Join the individual transcripts into one and write to a file
+        String fileNameWithoutPath = fileName.substring(
+                fileName.lastIndexOf("/") + 1);
         FileUtils.writeTextToFile(String.join(" ", transcriptions),
                 fileNameWithoutPath.replace(".wav", ".txt"));
         return true;
