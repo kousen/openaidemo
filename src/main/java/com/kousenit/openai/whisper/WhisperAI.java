@@ -19,6 +19,7 @@ import java.util.List;
 // response_format: json (default), text, srt, verbose_json, vtt
 //      "text" is used here, as it returns the transcript directly
 // language: ISO-639-1 code (optional)
+//
 // Rather than use multipart form data, add the file as a binary body directly
 // Optional "prompt" used to give standard word spellings whisper might miss
 //      If there are multiple chunks, the prompt for subsequent chunks should be the
@@ -53,6 +54,7 @@ public class WhisperAI {
 
         System.out.println("Transcribing " + chunkFile.getName());
         HttpEntity entity = MultipartEntityBuilder.create()
+                .setContentType(ContentType.MULTIPART_FORM_DATA)
                 .addBinaryBody("file", chunkFile, ContentType.DEFAULT_BINARY, chunkFile.getName())
                 .addTextBody("model", MODEL, ContentType.DEFAULT_TEXT)
                 .addTextBody("response_format", "text", ContentType.DEFAULT_TEXT)
@@ -79,23 +81,24 @@ public class WhisperAI {
 
         if (file.length() <= MAX_CHUNK_SIZE_BYTES) {
             String transcription = transcribeChunk(prompt, file);
-            transcriptions.add(transcription);
+            transcriptions = List.of(transcription);
         } else {
             var splitter = new WavFileSplitter();
             List<File> chunks = splitter.splitWavFileIntoChunks(file);
             for (File chunk : chunks) {
                 // Subsequent prompts are the previous transcriptions
-                prompt = transcribeChunk(prompt, chunk);
-                transcriptions.add(prompt);
+                String transcription = transcribeChunk(prompt, chunk);
+                transcriptions.add(transcription);
+                prompt = transcription;
 
-                // After transcribing, no longer need the individual chunks
+                // After transcribing, no longer need the chunk
                 if(!chunk.delete()) {
                     System.out.println("Failed to delete " + chunk.getName());
                 }
             }
         }
 
-        // Join the individual transcripts into one and write to a file
+        // Join the individual transcripts and write to a file
         String fileNameWithoutPath = fileName.substring(
                 fileName.lastIndexOf("/") + 1);
         FileUtils.writeTextToFile(String.join(" ", transcriptions),
