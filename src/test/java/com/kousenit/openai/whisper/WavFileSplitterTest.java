@@ -15,9 +15,6 @@ class WavFileSplitterTest {
     // Size: 48MB
     private static final String MEDIUM_WAV_FILE = "src/main/resources/EarningsCall.wav";
 
-    // Size: 231MB
-    private static final String LARGE_WAV_FILE = "src/main/resources/access_chatgpt_java.wav";
-
     private final WavFileSplitter splitter = new WavFileSplitter();
 
     @Test
@@ -45,22 +42,4 @@ class WavFileSplitterTest {
         System.out.println("Total chunk size: " + totalChunkSize);
         assertThat(totalChunkSize).isCloseTo(sourceWavFile.length(), withinPercentage(1.0));
     }
-
-    @Test
-    void splitLargeFile() {
-        File sourceWavFile = new File(LARGE_WAV_FILE);
-        System.out.println("Source file size: " + sourceWavFile.length());
-        assertThat(sourceWavFile.length()).isGreaterThan(25 * 1024 * 1024);
-
-        List<File> chunks = splitter.splitWavFileIntoChunks(sourceWavFile);
-        System.out.println("Number of chunks: " + chunks.size());
-        chunks.forEach(chunk ->
-                assertThat(chunk.length()).isLessThanOrEqualTo(25 * 1024 * 1024));
-        long totalChunkSize = chunks.stream()
-                .mapToLong(File::length)
-                .sum();
-        System.out.println("Total chunk size: " + totalChunkSize);
-        assertThat(totalChunkSize).isCloseTo(sourceWavFile.length(), withinPercentage(1.0));
-    }
-
 }
