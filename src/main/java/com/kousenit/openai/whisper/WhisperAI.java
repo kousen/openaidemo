@@ -81,6 +81,9 @@ public class WhisperAI {
             for (File chunk : chunks) {
                 prompt = transcribeChunk(prompt, chunk);
                 transcriptions.add(prompt);
+                if(!chunk.delete()) {
+                    System.out.println("Failed to delete " + chunk.getName());
+                }
             }
         }
         String fileNameWithoutPath = fileName.substring(fileName.lastIndexOf("/") + 1);
