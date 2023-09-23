@@ -21,7 +21,6 @@ public class WavFileSplitter {
             long totalFrames = inputStream.getFrameLength(); // Total frames in the source wav file
             AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(sourceWavFile);
             AudioFormat format = fileFormat.getFormat();
-            System.out.println("Source file format: " + format);
 
             // Calculate the maximum number of frames for each chunk
             int frameSize = format.getFrameSize(); // Number of bytes in each frame
