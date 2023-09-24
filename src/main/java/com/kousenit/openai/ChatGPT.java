@@ -60,6 +60,13 @@ public class ChatGPT {
                 0.7);
     }
 
+    public String getResponseToMessages(String model, Message... messages) {
+        List<Message> messageList = List.of(messages);
+        ChatRequest chatRequest = new ChatRequest(model, messageList, 0.7);
+        ChatResponse chatResponse = createChatResponse(chatRequest);
+        return chatResponse.choices().get(0).message().content();
+    }
+
     public ChatResponse createChatResponse(ChatRequest chatRequest) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(CHAT_URL))

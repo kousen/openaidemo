@@ -70,7 +70,7 @@ public class WhisperAI {
         }
     }
 
-    public boolean transcribe(String fileName) {
+    public String transcribe(String fileName) {
         File file = new File(fileName);
 
         // Collect the transcriptions of each chunk
@@ -101,8 +101,9 @@ public class WhisperAI {
         // Join the individual transcripts and write to a file
         String fileNameWithoutPath = fileName.substring(
                 fileName.lastIndexOf("/") + 1);
-        FileUtils.writeTextToFile(String.join(" ", transcriptions),
+        String transcription = String.join(" ", transcriptions);
+        FileUtils.writeTextToFile(transcription,
                 fileNameWithoutPath.replace(".wav", ".txt"));
-        return true;
+        return transcription;
     }
 }
