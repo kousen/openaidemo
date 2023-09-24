@@ -2,6 +2,6 @@ The file EarningsCall.wav is from the OpenAI tutorial on using the Whisper model
 
 See https://platform.openai.com/docs/tutorials/meeting-minutes for details.
 
-(Looks like it's too long to be uploaded programmatically. Sigh. It should probably be split into multiple smaller files, but that's likely more trouble than it's worth.)
+The `WhisperTutorial` class is a Java implementation of the Python code in the tutorial.
 
-The file AssertJExceptions.wav was exported from Descript from a YouTube short I created on the topic. See https://www.youtube.com/shorts/JUZjnkpYPgY for details.
+The file AssertJExceptions.wav was exported from Descript from a YouTube Short I created on the topic. See https://www.youtube.com/shorts/JUZjnkpYPgY for the deployed Short.

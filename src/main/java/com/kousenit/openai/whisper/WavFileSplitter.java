@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WavFileSplitter {
-    // maximum chunk size of 25MB; use 20MB to be safe
-    private static final long MAX_CHUNK_SIZE_BYTES = 20 * 1024 * 1024;
 
     public List<File> splitWavFileIntoChunks(File sourceWavFile) {
         List<File> chunks = new ArrayList<>();
@@ -24,7 +22,7 @@ public class WavFileSplitter {
 
             // Calculate the maximum number of frames for each chunk
             int frameSize = format.getFrameSize(); // Number of bytes in each frame
-            long framesPerChunk = MAX_CHUNK_SIZE_BYTES / frameSize;
+            long framesPerChunk = WhisperAI.MAX_CHUNK_SIZE_BYTES / frameSize;
 
             byte[] buffer = new byte[(int) (framesPerChunk * frameSize)];
 

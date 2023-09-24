@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.withinPercentage;
 
 class WavFileSplitterTest {
+
     // Size: 4.2MB
     private static final String SMALL_WAV_FILE = "src/main/resources/AssertJExceptions.wav";
 
@@ -22,7 +23,6 @@ class WavFileSplitterTest {
         File sourceWavFile = new File(SMALL_WAV_FILE);
         System.out.println("Source file size: " + sourceWavFile.length());
         List<File> chunks = splitter.splitWavFileIntoChunks(sourceWavFile);
-        System.out.println("Number of chunks: " + chunks.size());
         assertThat(chunks).hasSize(1);
     }
 
@@ -30,11 +30,11 @@ class WavFileSplitterTest {
     void splitMediumFile() {
         File sourceWavFile = new File(MEDIUM_WAV_FILE);
         System.out.println("Source file size: " + sourceWavFile.length());
-        assertThat(sourceWavFile.length()).isGreaterThan(25 * 1024 * 1024);
+        assertThat(sourceWavFile.length()).isGreaterThan(WhisperAI.MAX_ALLOWED_SIZE);
 
         List<File> chunks = splitter.splitWavFileIntoChunks(sourceWavFile);
         chunks.forEach(chunk ->
-                assertThat(chunk.length()).isLessThanOrEqualTo(25 * 1024 * 1024));
+                assertThat(chunk.length()).isLessThanOrEqualTo(WhisperAI.MAX_ALLOWED_SIZE));
         System.out.println("Number of chunks: " + chunks.size());
         long totalChunkSize = chunks.stream()
                 .mapToLong(File::length)
