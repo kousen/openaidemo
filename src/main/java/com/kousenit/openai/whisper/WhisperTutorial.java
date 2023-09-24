@@ -73,6 +73,7 @@ public class WhisperTutorial {
 
         // Call GPT-4 in parallel to get the responses to each prompt
         List.of(SUMMARIZE_PROMPT, KEY_POINTS_PROMPT, ACTION_ITEMS_PROMPT, SENTIMENT_PROMPT).parallelStream()
+                .peek(prompt -> System.out.println("Request on thread " + Thread.currentThread().getName()))
                 .map(prompt -> chatGPT.getResponseToMessages(ChatGPT.GPT_4,
                         new Message(Role.SYSTEM, prompt),
                         new Message(Role.USER, transcription)))

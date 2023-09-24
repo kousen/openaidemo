@@ -37,8 +37,8 @@ import java.util.List;
 
 public class WhisperAI {
     private final static String URL = "https://api.openai.com/v1/audio/transcriptions";
-    public final static int MAX_CHUNK_SIZE_BYTES = 20 * 1024 * 1024;
     public final static int MAX_ALLOWED_SIZE = 25 * 1024 * 1024;
+    public final static int MAX_CHUNK_SIZE_BYTES = 20 * 1024 * 1024;
 
     private final static String KEY = System.getenv("OPENAI_API_KEY");
 
@@ -87,7 +87,7 @@ public class WhisperAI {
         // First prompt is the word list
         String prompt = WORD_LIST;
 
-        if (file.length() <= MAX_CHUNK_SIZE_BYTES) {
+        if (file.length() <= MAX_ALLOWED_SIZE) {
             String transcription = transcribeChunk(prompt, file);
             transcriptions = List.of(transcription);
         } else {

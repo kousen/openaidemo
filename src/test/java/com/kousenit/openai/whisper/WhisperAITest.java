@@ -15,7 +15,7 @@ class WhisperAITest {
         String transcription = whisperAI.transcribe(SAMPLE_SMALL_WAV_FILE);
         assertThat(transcription)
                 .isNotBlank()
-                .containsIgnoringCase("AssertJ")
+                .contains("AssertJ")
                 .hasLineCount(1);
     }
 
@@ -24,7 +24,7 @@ class WhisperAITest {
         String transcription = whisperAI.transcribe(SAMPLE_MEDIUM_WAV_FILE);
         assertThat(transcription)
                 .isNotBlank()
-                .containsIgnoringCase("FinTech Plus")
+                .contains("FinTech Plus")
                 .hasLineCount(3);
     }
 
