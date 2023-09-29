@@ -78,7 +78,7 @@ public class ChatGPT {
         try {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode() + ": " + response.body());
+            // System.out.println(response.statusCode() + ": " + response.body());
             return gson.fromJson(response.body(), ChatResponse.class);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

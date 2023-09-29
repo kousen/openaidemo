@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 // https://platform.openai.com/docs/tutorials/meeting-minutes
@@ -73,11 +75,27 @@ public class WhisperTutorial {
 
         // Call GPT-4 in parallel to get the responses to each prompt
         List.of(SUMMARIZE_PROMPT, KEY_POINTS_PROMPT, ACTION_ITEMS_PROMPT, SENTIMENT_PROMPT).parallelStream()
-                .peek(prompt -> System.out.println("Request on thread " + Thread.currentThread().getName()))
-                .map(prompt -> chatGPT.getResponseToMessages(ChatGPT.GPT_4,
-                        new Message(Role.SYSTEM, prompt),
-                        new Message(Role.USER, transcription)))
-                .forEach(System.out::println);
+                .forEach(prompt -> {
+                    Instant start = Instant.now();
+                    System.out.println("Request on thread " + Thread.currentThread().getName() + " started at " + start);
+
+                    String response = chatGPT.getResponseToMessages(ChatGPT.GPT_4,
+                            new Message(Role.SYSTEM, prompt),
+                            new Message(Role.USER, transcription));
+
+                    Instant end = Instant.now();
+                    System.out.println("Request on thread " + Thread.currentThread().getName() + " ended at " + end);
+                    System.out.println("Elapsed time: " + Duration.between(start, end).toMillis() + " ms");
+
+                    System.out.println("Response: " + response);
+                });
+
+
+//                .peek(prompt -> System.out.println("Request on thread " + Thread.currentThread().getName()))
+//                .map(prompt -> chatGPT.getResponseToMessages(ChatGPT.GPT_4,
+//                        new Message(Role.SYSTEM, prompt),
+//                        new Message(Role.USER, transcription)))
+//                .forEach(System.out::println);
     }
 
     public static void main(String[] args) throws IOException {
