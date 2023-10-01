@@ -22,7 +22,7 @@ public class WavFileSplitter {
 
             // Calculate the maximum number of frames for each chunk
             int frameSize = format.getFrameSize(); // Number of bytes in each frame
-            long framesPerChunk = WhisperAI.MAX_CHUNK_SIZE_BYTES / frameSize;
+            long framesPerChunk = WhisperTranscribe.MAX_CHUNK_SIZE_BYTES / frameSize;
 
             byte[] buffer = new byte[(int) (framesPerChunk * frameSize)];
 

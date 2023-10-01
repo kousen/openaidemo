@@ -15,7 +15,7 @@ import java.util.List;
 // https://platform.openai.com/docs/tutorials/meeting-minutes
 // Transcribe and analyze meeting minutes tutorial
 public class WhisperTutorial {
-    private final WhisperAI whisperAI = new WhisperAI();
+    private final WhisperTranscribe whisperTranscribe = new WhisperTranscribe();
     private final ChatGPT chatGPT = new ChatGPT();
     private static final String RESOURCES_PATH = "src/main/resources/";
 
@@ -64,7 +64,7 @@ public class WhisperTutorial {
                 System.err.println("Error reading transcription file: " + e.getMessage());
             }
         } else {
-            return whisperAI.transcribe(sourceWavFile.getAbsolutePath());
+            return whisperTranscribe.transcribe(sourceWavFile.getAbsolutePath());
         }
         return "";
     }

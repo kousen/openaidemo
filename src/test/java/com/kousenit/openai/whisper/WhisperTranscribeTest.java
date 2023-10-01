@@ -4,15 +4,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class WhisperAITest {
-    private final static String SAMPLE_SMALL_WAV_FILE = "src/main/resources/AssertJExceptions.wav";
-    private static final String SAMPLE_MEDIUM_WAV_FILE = "src/main/resources/EarningsCall.wav";
+class WhisperTranscribeTest {
+    private final static String SAMPLE_SMALL_WAV_FILE = "src/main/resources/audio/AssertJExceptions.wav";
+    private static final String SAMPLE_MEDIUM_WAV_FILE = "src/main/resources/audio/EarningsCall.wav";
 
-    private final WhisperAI whisperAI = new WhisperAI();
+    private final WhisperTranscribe whisperTranscribe = new WhisperTranscribe();
 
     @Test
     void transcribeFileBelowSizeLimit() {
-        String transcription = whisperAI.transcribe(SAMPLE_SMALL_WAV_FILE);
+        String transcription = whisperTranscribe.transcribe(SAMPLE_SMALL_WAV_FILE);
         assertThat(transcription)
                 .isNotBlank()
                 .contains("AssertJ")
@@ -21,7 +21,7 @@ class WhisperAITest {
 
     @Test
     void transcribeFileAboveSizeLimit() {
-        String transcription = whisperAI.transcribe(SAMPLE_MEDIUM_WAV_FILE);
+        String transcription = whisperTranscribe.transcribe(SAMPLE_MEDIUM_WAV_FILE);
         assertThat(transcription)
                 .isNotBlank()
                 .contains("FinTech Plus")

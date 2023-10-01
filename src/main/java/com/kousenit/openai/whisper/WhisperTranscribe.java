@@ -35,7 +35,7 @@ import java.util.List;
 // max size is 25MB; otherwise need to break the file into chunks
 // See the WavFileSplitter class for that
 
-public class WhisperAI {
+public class WhisperTranscribe {
     private final static String URL = "https://api.openai.com/v1/audio/transcriptions";
     public final static int MAX_ALLOWED_SIZE = 25 * 1024 * 1024;
     public final static int MAX_CHUNK_SIZE_BYTES = 20 * 1024 * 1024;
