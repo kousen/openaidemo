@@ -95,7 +95,7 @@ public class WhisperTranslate {
         String fileNameWithoutPath = fileName.substring(
                 fileName.lastIndexOf("/") + 1);
         FileUtils.writeTextToFile(transcription,
-                fileNameWithoutPath.replace(".wav", "translation.txt"));
+                fileNameWithoutPath.replace(".wav", ".translation.txt"));
         return transcription;
     }
 }
