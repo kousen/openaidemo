@@ -34,6 +34,7 @@ public class ServiceDemo {
                     .uri(URI.create("https://api.openai.com/v1/chat/completions"))
                     .header("Authorization", "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
                     .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(chatRequest)))
                     .build();
             response = client.send(request, HttpResponse.BodyHandlers.ofString());

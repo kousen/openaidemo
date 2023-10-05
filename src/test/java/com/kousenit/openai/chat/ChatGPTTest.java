@@ -94,9 +94,9 @@ class ChatGPTTest {
 
         ChatRequest request = new ChatRequest(ChatGPT.GPT_4,
                 List.of(systemMessage, fileMessage, quizMessage),
-                0.7);
+                ChatGPT.DEFAULT_TEMPERATURE);
         ChatResponse response = chat.createChatResponse(request);
         System.out.println(response.usage());
-        System.out.println(response.choices().get(0).message().content());
+        System.out.println(chat.extractStringResponse(response));
     }
 }

@@ -23,6 +23,8 @@ public class ChatGPT {
     public final static String GPT_35_TURBO = "gpt-3.5-turbo";
     public final static String GPT_4 = "gpt-4";
 
+    public final static double DEFAULT_TEMPERATURE = 0.7;
+
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(Role.class, new LowercaseEnumSerializer())
@@ -50,21 +52,29 @@ public class ChatGPT {
     }
 
     public String getResponse(String prompt, String model) {
-        ChatRequest chatRequest = createChatRequest(prompt, model);
+        return getResponse(prompt, model, DEFAULT_TEMPERATURE);
+    }
+
+    public String getResponse(String prompt, String model, double temperature) {
+        ChatRequest chatRequest = createChatRequest(prompt, model, temperature);
         ChatResponse chatResponse = createChatResponse(chatRequest);
         return chatResponse.choices().get(0).message().content();
     }
 
-    public ChatRequest createChatRequest(String prompt, String model) {
+    public ChatRequest createChatRequest(String prompt, String model, double temperature) {
         return new ChatRequest(model,
                 List.of(new Message(Role.USER, prompt)),
-                0.7);
+                temperature);
     }
 
     public String getResponseToMessages(String model, Message... messages) {
         List<Message> messageList = List.of(messages);
-        ChatRequest chatRequest = new ChatRequest(model, messageList, 0.7);
+        ChatRequest chatRequest = new ChatRequest(model, messageList, DEFAULT_TEMPERATURE);
         ChatResponse chatResponse = createChatResponse(chatRequest);
+        return extractStringResponse(chatResponse);
+    }
+
+    public String extractStringResponse(ChatResponse chatResponse) {
         return chatResponse.choices().get(0).message().content();
     }
 
@@ -79,7 +89,9 @@ public class ChatGPT {
         try {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            // System.out.println(response.statusCode() + ": " + response.body());
+            if (response.statusCode() != 200) {
+                throw new RuntimeException("Error: " + response.statusCode() + ": " + response.body());
+            }
             return gson.fromJson(response.body(), ChatResponse.class);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

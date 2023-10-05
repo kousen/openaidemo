@@ -38,7 +38,6 @@ public class DallE {
                 .uri(URI.create(DallE.URL))
                 .header("Authorization", "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
                 .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(imageRequest)))
                 .build();
         try {
