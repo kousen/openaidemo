@@ -1,4 +1,4 @@
-package com.kousenit.openai;
+package com.kousenit.openai.chat;
 
 
 import com.google.gson.FieldNamingPolicy;
@@ -28,14 +28,16 @@ public class ServiceDemo {
         System.out.println(chatRequest);
         System.out.println(gson.toJson(chatRequest));
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.openai.com/v1/chat/completions"))
-                .header("Authorization","Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(chatRequest)))
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response;
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.openai.com/v1/chat/completions"))
+                    .header("Authorization", "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(chatRequest)))
+                    .build();
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
         System.out.println(response.statusCode());
         String body = response.body();
         System.out.println(body);

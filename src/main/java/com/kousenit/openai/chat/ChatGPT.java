@@ -1,4 +1,4 @@
-package com.kousenit.openai;
+package com.kousenit.openai.chat;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -25,6 +25,7 @@ public class ChatGPT {
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .registerTypeAdapter(Role.class, new LowercaseEnumSerializer())
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();

@@ -1,4 +1,4 @@
-package com.kousenit.openai;
+package com.kousenit.openai.chat;
 
 import com.google.gson.annotations.SerializedName;
 

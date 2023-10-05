@@ -1,5 +1,6 @@
-package com.kousenit.openai;
+package com.kousenit.openai.chat;
 
+import com.kousenit.openai.FileUtils;
 import com.kousenit.openai.json.ChatRequest;
 import com.kousenit.openai.json.ChatResponse;
 import com.kousenit.openai.json.Message;
