@@ -1,7 +1,7 @@
 package com.kousenit.openai.whisper;
 
-import com.kousenit.openai.ChatGPT;
-import com.kousenit.openai.Role;
+import com.kousenit.openai.chat.ChatGPT;
+import com.kousenit.openai.chat.Role;
 import com.kousenit.openai.json.Message;
 
 import java.io.File;
