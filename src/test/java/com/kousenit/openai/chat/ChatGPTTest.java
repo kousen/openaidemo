@@ -4,6 +4,7 @@ import com.kousenit.openai.FileUtils;
 import com.kousenit.openai.json.ChatRequest;
 import com.kousenit.openai.json.ChatResponse;
 import com.kousenit.openai.json.Message;
+import com.kousenit.openai.json.ModelList;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -19,14 +20,26 @@ class ChatGPTTest {
 
     @Test
     void list_models() {
-        chat.listModels().forEach(System.out::println);
+        List<ModelList.Model> models = chat.listModels();
+        assertThat(models).isNotEmpty();
+        List<String> ownedByValues = models.stream()
+                .map(ModelList.Model::ownedBy)
+                .distinct()
+                .toList();
+        ownedByValues.forEach(System.out::println);
+        assertThat(ownedByValues).contains("openai", "system");
     }
 
     @Test
     void list_gpt_models() {
-        chat.listModels().stream()
+        List<ModelList.Model> models = chat.listModels();
+        List<ModelList.Model> gptModels = models.stream()
                 .filter(model -> model.id().contains("gpt"))
-                .forEach(System.out::println);
+                .peek(System.out::println)
+                .toList();
+        assertThat(gptModels)
+                .map(ModelList.Model::id)
+                .contains("gpt-3.5-turbo", "gpt-4");
     }
 
     @Test
@@ -34,16 +47,6 @@ class ChatGPTTest {
         String prompt = "Say this is a test!";
         String response = chat.getResponse(prompt, ChatGPT.GPT_35_TURBO);
         assertEquals("This is a test!", response);
-    }
-
-    @Test
-    void suggest_a_name() {
-        String prompt = """
-                    Suggest a name for a presentation about
-                    AI tools for Java developers.
-                    """;
-        String response = chat.getResponse(prompt, ChatGPT.GPT_4);
-        System.out.println(response);
     }
 
     @Test
@@ -57,10 +60,10 @@ class ChatGPTTest {
         ChatRequest request = new ChatRequest(
                 ChatGPT.GPT_35_TURBO,
                 List.of(userMessage),
-                0.7);
+                ChatGPT.DEFAULT_TEMPERATURE);
         ChatResponse response = chat.createChatResponse(request);
         System.out.println(response.usage());
-        String result = response.choices().get(0).message().content();
+        String result = chat.extractStringResponse(response);
         System.out.println(result);
         assertThat(result).contains("42");
     }

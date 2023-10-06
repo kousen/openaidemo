@@ -37,7 +37,6 @@ public class ChatGPT {
                 .uri(URI.create(MODELS_URL))
                 .header("Authorization",
                         "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
-                .GET()
                 .build();
         try {
             HttpResponse<String> response =
@@ -78,6 +77,7 @@ public class ChatGPT {
         return chatResponse.choices().get(0).message().content();
     }
 
+    // Transmit the request to the OpenAI API and return the response
     public ChatResponse createChatResponse(ChatRequest chatRequest) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(CHAT_URL))
