@@ -1,4 +1,4 @@
-package com.kousenit.openai;
+package com.kousenit.openai.utilities;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

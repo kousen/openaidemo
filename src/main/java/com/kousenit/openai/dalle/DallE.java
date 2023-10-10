@@ -3,7 +3,7 @@ package com.kousenit.openai.dalle;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.kousenit.openai.FileUtils;
+import com.kousenit.openai.utilities.FileUtils;
 import com.kousenit.openai.json.Image;
 import com.kousenit.openai.json.ImageRequest;
 import com.kousenit.openai.json.ImageResponse;
