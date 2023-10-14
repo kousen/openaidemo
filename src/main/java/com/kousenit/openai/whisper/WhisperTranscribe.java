@@ -78,6 +78,7 @@ public class WhisperTranscribe {
     }
 
     public String transcribe(String fileName) {
+        System.out.println("Transcribing " + fileName);
         File file = new File(fileName);
 
         // Collect the transcriptions of each chunk
