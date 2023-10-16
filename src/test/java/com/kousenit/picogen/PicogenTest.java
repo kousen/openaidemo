@@ -79,7 +79,6 @@ class PicogenTest {
         assertEquals(4, count);
         assertThat(Paths.get("src/main/resources/images").toFile()
                 .listFiles(file -> file.getName().endsWith(".png")))
-                //.hasSize(4)
                 .allMatch(file -> file.getName().endsWith(".png"));
     }
 }
