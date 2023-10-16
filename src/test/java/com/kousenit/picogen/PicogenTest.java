@@ -67,7 +67,7 @@ class PicogenTest {
         System.out.println(response);
     }
 
-    @Test
+    @Test @Disabled("Working now -- no need to run it again")
     void saveImagesToFiles() {
         List<String> urls = List.of(
                 "https://api.picogen.io/files/202310/15/892cd09c69baff3e7e3394adc73162da.png",
