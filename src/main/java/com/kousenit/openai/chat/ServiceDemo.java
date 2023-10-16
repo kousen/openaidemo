@@ -29,16 +29,15 @@ public class ServiceDemo {
         System.out.println(gson.toJson(chatRequest));
 
         HttpResponse<String> response;
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.openai.com/v1/chat/completions"))
-                    .header("Authorization", "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
-                    .header("Content-Type", "application/json")
-                    .header("Accept", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(chatRequest)))
-                    .build();
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        }
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.openai.com/v1/chat/completions"))
+                .header("Authorization", "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(chatRequest)))
+                .build();
+        response = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println(response.statusCode());
         String body = response.body();
         System.out.println(body);
@@ -46,6 +45,9 @@ public class ServiceDemo {
         ChatResponse chatResponse = gson.fromJson(body, ChatResponse.class);
         System.out.println(chatResponse);
         System.out.println(chatResponse.usage());
-        System.out.println(chatResponse.choices().get(0).message().content());
+        System.out.println(chatResponse.choices()
+                .get(0)
+                .message()
+                .content());
     }
 }
