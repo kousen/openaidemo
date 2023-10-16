@@ -1,6 +1,6 @@
 package com.kousenit.openai.whisper;
 
-import com.kousenit.openai.utilities.FileUtils;
+import com.kousenit.utilities.FileUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.FileBody;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;

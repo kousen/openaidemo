@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.kousenit.picogen.json.*;
+import com.kousenit.utilities.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +16,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 // See docs at https://picogen.io/docs
@@ -164,25 +163,20 @@ public class Picogen {
         System.out.println("Saved " + count + " images to src/main/resources/images");
     }
 
-    private long saveImagesToFiles(List<String> urls) {
+    long saveImagesToFiles(List<String> urls) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        AtomicInteger count = new AtomicInteger(0);
         return urls.stream()
                 .map(this::getImageBytes)
-                .map(bytes -> {
-                    String fileName = String.format("image_%s_%d.png", timestamp, count.getAndIncrement());
-                    Path directory = Paths.get("src/main/resources/images");
-                    Path filePath = directory.resolve(fileName);
-                    writeFile(bytes, filePath);
-                    return filePath;
-                })
+                .filter(FileUtils::writeByteArrayToFile)
                 .count();
     }
 
     private byte[] getImageBytes(String url) {
+        System.out.println("Getting " + url);
         try {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
             HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            System.out.println("Response: " + response.statusCode());
             return response.body();
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

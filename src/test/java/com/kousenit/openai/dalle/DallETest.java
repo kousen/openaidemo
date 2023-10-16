@@ -10,10 +10,8 @@ class DallETest {
     public void testDallE() {
         DallE dallE = new DallE();
         long num = dallE.getImages("""
-                A realistic photo of a
-                robot leaping into the air
-                in joy after accomplishing a
-                difficult task successfully
+                a photorealistic image of a happy robot jumping on springs,
+                thrilled that he accomplished a hard task
                 """, 2);
         System.out.printf("Downloaded %d images%n", num);
         assertThat(num).isEqualTo(2);

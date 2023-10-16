@@ -3,7 +3,7 @@ package com.kousenit.stabilityai;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.kousenit.openai.utilities.FileUtils;
+import com.kousenit.utilities.FileUtils;
 import com.kousenit.stabilityai.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
