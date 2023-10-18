@@ -13,6 +13,15 @@ import java.util.Base64;
 public class FileUtils {
     private static int counter;
 
+    static {
+        try {
+            Files.createDirectories(Paths.get("src/main/resources/text"));
+            Files.createDirectories(Paths.get("src/main/resources/images"));
+        } catch (IOException e) {
+            throw new ExceptionInInitializerError("Error creating directory");
+        }
+    }
+
     public static String readFile(String fileName) {
         try {
             return Files.readString(Path.of(fileName));
@@ -27,7 +36,6 @@ public class FileUtils {
         Path directory = Paths.get("src/main/resources/images");
         Path filePath = directory.resolve(fileName);
         try {
-            Files.createDirectories(directory);
             byte[] bytes = Base64.getDecoder().decode(imageData);
             Files.write(filePath, bytes, StandardOpenOption.CREATE_NEW);
             System.out.printf("Saved %s to src/main/resources/images%n", fileName);
@@ -43,7 +51,6 @@ public class FileUtils {
         Path directory = Paths.get("src/main/resources/images");
         Path filePath = directory.resolve(fileName);
         try {
-            Files.createDirectories(directory);
             Files.write(filePath, bytes, StandardOpenOption.CREATE_NEW);
             System.out.printf("Saved %s to src/main/resources/images%n", fileName);
             return true;
@@ -56,7 +63,6 @@ public class FileUtils {
         Path directory = Paths.get("src/main/resources/text");
         Path filePath = directory.resolve(fileName);
         try {
-            Files.createDirectories(directory);
             Files.deleteIfExists(filePath);
             Files.writeString(filePath, textData, StandardOpenOption.CREATE_NEW);
             System.out.printf("Saved %s to src/main/resources/text%n", fileName);

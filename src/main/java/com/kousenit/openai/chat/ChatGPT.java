@@ -70,6 +70,7 @@ public class ChatGPT {
         List<Message> messageList = List.of(messages);
         ChatRequest chatRequest = new ChatRequest(model, messageList, DEFAULT_TEMPERATURE);
         ChatResponse chatResponse = createChatResponse(chatRequest);
+        System.out.println(chatResponse.usage());
         return extractStringResponse(chatResponse);
     }
 

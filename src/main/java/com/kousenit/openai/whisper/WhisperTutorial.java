@@ -3,102 +3,70 @@ package com.kousenit.openai.whisper;
 import com.kousenit.openai.chat.ChatGPT;
 import com.kousenit.openai.chat.Role;
 import com.kousenit.openai.json.Message;
+import com.kousenit.utilities.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+
+import static com.kousenit.openai.whisper.TutorialPrompts.*;
 
 // https://platform.openai.com/docs/tutorials/meeting-minutes
 // Transcribe and analyze meeting minutes tutorial
 public class WhisperTutorial {
-    private final WhisperTranscribe whisperTranscribe = new WhisperTranscribe();
-    private final ChatGPT chatGPT = new ChatGPT();
     private static final String RESOURCES_PATH = "src/main/resources/";
 
-    private static final String SUMMARIZE_PROMPT = """
-            You are a highly skilled AI trained in language comprehension and summarization.
-            I would like you to read the following text and summarize it into a concise
-            abstract paragraph. Aim to retain the most important points, providing a coherent
-            and readable summary that could help a person understand the main points of the
-            discussion without needing to read the entire text. Please avoid unnecessary
-            details or tangential points.
-            """;
+    private final WhisperTranscribe whisperTranscribe = new WhisperTranscribe();
+    private final ChatGPT chatGPT = new ChatGPT();
 
-    private static final String KEY_POINTS_PROMPT = """
-            You are a proficient AI with a specialty in distilling information into key points.
-            Based on the following text, identify and list the main points that were discussed
-            or brought up. These should be the most important ideas, findings, or topics that
-            are crucial to the essence of the discussion. Your goal is to provide a list that
-            someone could read to quickly understand what was talked about.
-            """;
+    public void processMeetingMinutes() {
+        // Transcribe audio, or load transcription if it already exists
+        String transcription = getTranscription("EarningsCall");
 
-    private static final String ACTION_ITEMS_PROMPT = """
-            You are an AI expert in analyzing conversations and extracting action items.
-            Please review the text and identify any tasks, assignments, or actions that
-            were agreed upon or mentioned as needing to be done. These could be tasks
-            assigned to specific individuals, or general actions that the group has
-            decided to take. Please list these action items clearly and concisely.
-            """;
+        Map<String, String> promptMap = Map.ofEntries(
+                Map.entry("summarize", SUMMARIZE_PROMPT),
+                Map.entry("key_points", KEY_POINTS_PROMPT),
+                Map.entry("action_items", ACTION_ITEMS_PROMPT),
+                Map.entry("sentiment", SENTIMENT_PROMPT)
+        );
 
-    private static final String SENTIMENT_PROMPT = """
-            As an AI with expertise in language and emotion analysis, your task is to analyze
-            the sentiment of the following text. Please consider the overall tone of the
-            discussion, the emotion conveyed by the language used, and the context in which words
-            and phrases are used. Indicate whether the sentiment is generally positive, negative,
-            or neutral, and provide brief explanations for your analysis where possible.
-            """;
+        // Call GPT-4 to get the responses to each prompt, in parallel
+        ConcurrentMap<String, String> responseMap = promptMap.entrySet()
+                .parallelStream()
+                .collect(Collectors.toConcurrentMap(
+                                Map.Entry::getKey,
+                                e -> getResponse(e.getValue(), transcription)
+                        )
+                );
+
+        responseMap.forEach((name, response) ->
+                FileUtils.writeTextToFile(response, name + ".txt"));
+    }
+
+    private String getResponse(String prompt, String transcription) {
+        return chatGPT.getResponseToMessages(ChatGPT.GPT_4,
+                new Message(Role.SYSTEM, prompt),
+                new Message(Role.USER, transcription));
+    }
 
     @SuppressWarnings("SameParameterValue")
-    private String getTranscription(String fileName) {
-        File sourceWavFile = new File(RESOURCES_PATH + fileName + ".wav");
-        File transcriptionFile = new File(RESOURCES_PATH + "text/" + fileName + ".txt");
+    public String getTranscription(String fileName) {
+        Path transcriptionFilePath = Paths.get(RESOURCES_PATH, "text", fileName + ".txt");
+        Path audioFilePath = Paths.get(RESOURCES_PATH, "audio", fileName + ".wav");
 
-        if (transcriptionFile.exists()) {
+        if (Files.exists(transcriptionFilePath)) {
             try {
-                return Files.readString(Path.of(transcriptionFile.getAbsolutePath()));
+                return Files.readString(transcriptionFilePath);
             } catch (IOException e) {
                 System.err.println("Error reading transcription file: " + e.getMessage());
             }
         } else {
-            return whisperTranscribe.transcribe(sourceWavFile.getAbsolutePath());
+            return whisperTranscribe.transcribe(audioFilePath.toString());
         }
         return "";
-    }
-
-    public void processMeetingMinutes() {
-        // Only call this once:
-        String transcription = getTranscription("EarningsCall");
-
-        // Call GPT-4 in parallel to get the responses to each prompt
-        List.of(SUMMARIZE_PROMPT, KEY_POINTS_PROMPT, ACTION_ITEMS_PROMPT, SENTIMENT_PROMPT).parallelStream()
-                .forEach(prompt -> {
-                    Instant start = Instant.now();
-                    System.out.println("Request on thread " + Thread.currentThread().getName() + " started at " + start);
-
-                    String response = chatGPT.getResponseToMessages(ChatGPT.GPT_4,
-                            new Message(Role.SYSTEM, prompt),
-                            new Message(Role.USER, transcription));
-
-                    Instant end = Instant.now();
-                    System.out.println("Request on thread " + Thread.currentThread().getName() + " ended at " + end);
-                    System.out.println("Elapsed time: " + Duration.between(start, end).toMillis() + " ms");
-
-                    System.out.println("Response: " + response);
-                });
-
-
-//                .peek(prompt -> System.out.println("Request on thread " + Thread.currentThread().getName()))
-//                .map(prompt -> chatGPT.getResponseToMessages(ChatGPT.GPT_4,
-//                        new Message(Role.SYSTEM, prompt),
-//                        new Message(Role.USER, transcription)))
-//                .forEach(System.out::println);
-    }
-
-    public static void main(String[] args) throws IOException {
-        new WhisperTutorial().processMeetingMinutes();
     }
 }
