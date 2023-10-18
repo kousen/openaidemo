@@ -47,7 +47,7 @@ public class WhisperTutorial {
                 FileUtils.writeTextToFile(response, name + ".txt"));
     }
 
-    private String getResponse(String prompt, String transcription) {
+    public String getResponse(String prompt, String transcription) {
         return chatGPT.getResponseToMessages(ChatGPT.GPT_4,
                 new Message(Role.SYSTEM, prompt),
                 new Message(Role.USER, transcription));
