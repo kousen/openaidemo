@@ -31,14 +31,17 @@ public class WhisperTutorial {
                 Map.entry("sentiment", TutorialPrompts.SENTIMENT_PROMPT)
         );
 
-        // Call GPT-4 to get the responses to each prompt, in parallel
-        ConcurrentMap<String, String> responseMap = promptMap.entrySet()
-                .parallelStream()
+        // Call GPT-4 to get the responses to each prompt
+        long startTime = System.nanoTime();
+        ConcurrentMap<String, String> responseMap = promptMap.entrySet().parallelStream()
+                .peek(e -> System.out.println("Processing " + e.getKey()))
                 .collect(Collectors.toConcurrentMap(
                                 Map.Entry::getKey,
                                 e -> getResponse(e.getValue(), transcription)
                         )
                 );
+        long endTime = System.nanoTime();
+        System.out.printf("Elapsed time: %.3f seconds%n", (endTime - startTime) / 1e9);
 
         responseMap.forEach((name, response) ->
                 FileUtils.writeTextToFile(response, name + ".txt"));

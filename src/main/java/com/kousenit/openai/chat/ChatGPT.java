@@ -7,6 +7,8 @@ import com.kousenit.openai.json.ChatRequest;
 import com.kousenit.openai.json.ChatResponse;
 import com.kousenit.openai.json.Message;
 import com.kousenit.openai.json.ModelList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,6 +26,8 @@ public class ChatGPT {
     public final static String GPT_4 = "gpt-4";
 
     public final static double DEFAULT_TEMPERATURE = 0.7;
+
+    private final Logger logger = LoggerFactory.getLogger(ChatGPT.class);
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -69,8 +73,11 @@ public class ChatGPT {
     public String getResponseToMessages(String model, Message... messages) {
         List<Message> messageList = List.of(messages);
         ChatRequest chatRequest = new ChatRequest(model, messageList, DEFAULT_TEMPERATURE);
+        long startTime = System.nanoTime();
         ChatResponse chatResponse = createChatResponse(chatRequest);
-        System.out.println(chatResponse.usage());
+        long endTime = System.nanoTime();
+        logger.info("Elapsed time: {} ms", (endTime - startTime) / 1_000_000);
+        logger.info(chatResponse.usage().toString());
         return extractStringResponse(chatResponse);
     }
 
