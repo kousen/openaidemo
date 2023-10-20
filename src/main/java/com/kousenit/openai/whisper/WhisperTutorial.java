@@ -13,12 +13,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
-import static com.kousenit.openai.whisper.TutorialPrompts.*;
-
 // https://platform.openai.com/docs/tutorials/meeting-minutes
 // Transcribe and analyze meeting minutes tutorial
 public class WhisperTutorial {
-    private static final String RESOURCES_PATH = "src/main/resources/";
 
     private final WhisperTranscribe whisperTranscribe = new WhisperTranscribe();
     private final ChatGPT chatGPT = new ChatGPT();
@@ -28,10 +25,10 @@ public class WhisperTutorial {
         String transcription = getTranscription("EarningsCall");
 
         Map<String, String> promptMap = Map.ofEntries(
-                Map.entry("summarize", SUMMARIZE_PROMPT),
-                Map.entry("key_points", KEY_POINTS_PROMPT),
-                Map.entry("action_items", ACTION_ITEMS_PROMPT),
-                Map.entry("sentiment", SENTIMENT_PROMPT)
+                Map.entry("summarize", TutorialPrompts.SUMMARIZE_PROMPT),
+                Map.entry("key_points", TutorialPrompts.KEY_POINTS_PROMPT),
+                Map.entry("action_items", TutorialPrompts.ACTION_ITEMS_PROMPT),
+                Map.entry("sentiment", TutorialPrompts.SENTIMENT_PROMPT)
         );
 
         // Call GPT-4 to get the responses to each prompt, in parallel
@@ -55,8 +52,8 @@ public class WhisperTutorial {
 
     @SuppressWarnings("SameParameterValue")
     public String getTranscription(String fileName) {
-        Path transcriptionFilePath = Paths.get(RESOURCES_PATH, "text", fileName + ".txt");
-        Path audioFilePath = Paths.get(RESOURCES_PATH, "audio", fileName + ".wav");
+        Path transcriptionFilePath = Paths.get(FileUtils.TEXT_RESOURCES_PATH, fileName + ".txt");
+        Path audioFilePath = Paths.get(FileUtils.AUDIO_RESOURCES_PATH, fileName + ".wav");
 
         if (Files.exists(transcriptionFilePath)) {
             try {
