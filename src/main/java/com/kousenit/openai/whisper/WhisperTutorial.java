@@ -45,6 +45,7 @@ public class WhisperTutorial {
 
         responseMap.forEach((name, response) ->
                 FileUtils.writeTextToFile(response, name + ".txt"));
+        FileUtils.writeWordDocument(responseMap);
     }
 
     public String getResponse(String prompt, String transcription) {
