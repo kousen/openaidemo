@@ -1,11 +1,11 @@
 package com.kousenit.utilities;
 
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -113,9 +115,29 @@ public class FileUtils {
     }
 
     private static void addTextToDocument(XWPFDocument document, String text) {
-        document.createParagraph()
-                .createRun()
-                .setText(text);
+        XWPFNumbering numbering = document.createNumbering();
+        BigInteger numId = numbering.addNum(numbering.getAbstractNumID(BigInteger.valueOf(1)));
+
+        // Look for the numbered list pattern inside the "key points" text
+        Pattern pattern = Pattern.compile("^\\d+\\. +.*");
+        Matcher matcher = pattern.matcher(text);
+
+        if (matcher.find()) {
+            try (Stream<String> lines = text.lines()) {
+                lines.forEach(line -> {
+                    XWPFParagraph paragraph = document.createParagraph();
+                    paragraph.setNumID(numId);
+                    paragraph.createRun().setText(
+                            line.substring(line.indexOf(".") + 1).trim());
+                });
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            XWPFRun textRun = document.createParagraph().createRun();
+            textRun.setText(text);
+        }
+
     }
 
     private static void writeDocumentToFile(XWPFDocument document) throws IOException {
