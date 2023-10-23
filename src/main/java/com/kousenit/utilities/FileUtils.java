@@ -90,10 +90,9 @@ public class FileUtils {
         try (XWPFDocument document = new XWPFDocument()) {
             data.forEach((key, value) -> {
                 String title = transformKeyToTitle(key);
-                addTitleToDocument(document, title);
-                addTextToDocument(document, value);
+                addTitleToWordDocument(document, title);
+                addTextToWordDocument(document, value);
             });
-
             writeDocumentToFile(document);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -107,22 +106,21 @@ public class FileUtils {
                 .collect(Collectors.joining(" "));
     }
 
-    private static void addTitleToDocument(XWPFDocument document, String title) {
+    private static void addTitleToWordDocument(XWPFDocument document, String title) {
         XWPFRun titleRun = document.createParagraph().createRun();
         titleRun.setBold(true);
         titleRun.setFontSize(16);
         titleRun.setText(title);
     }
 
-    private static void addTextToDocument(XWPFDocument document, String text) {
-        XWPFNumbering numbering = document.createNumbering();
-        BigInteger numId = numbering.addNum(numbering.getAbstractNumID(BigInteger.valueOf(1)));
-
+    private static void addTextToWordDocument(XWPFDocument document, String text) {
         // Look for the numbered list pattern inside the "key points" text
         Pattern pattern = Pattern.compile("^\\d+\\. +.*");
         Matcher matcher = pattern.matcher(text);
 
         if (matcher.find()) {
+            XWPFNumbering numbering = document.createNumbering();
+            BigInteger numId = numbering.addNum(numbering.getAbstractNumID(BigInteger.valueOf(1)));
             try (Stream<String> lines = text.lines()) {
                 lines.forEach(line -> {
                     XWPFParagraph paragraph = document.createParagraph();

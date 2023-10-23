@@ -31,6 +31,6 @@ class FileUtilsTest {
         }
 
         FileUtils.writeWordDocument(fileContents);
-        System.out.println("Wrote document to " + FileUtils.TEXT_RESOURCES_PATH);
+        System.out.println("Wrote meeting_minutes.docx to " + FileUtils.TEXT_RESOURCES_PATH);
     }
 }
