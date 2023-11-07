@@ -7,6 +7,8 @@ import com.kousenit.utilities.FileUtils;
 import com.kousenit.openai.json.Image;
 import com.kousenit.openai.json.ImageRequest;
 import com.kousenit.openai.json.ImageResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,16 +18,21 @@ import java.net.http.HttpResponse;
 
 public class DallE {
     private static final String URL = "https://api.openai.com/v1/images/generations";
+    public static final String DALL_E_3 = "dall-e-3";
+    public static final String DALL_E_2 = "dall-e-2";
+
+    private final Logger logger = LoggerFactory.getLogger(DallE.class);
 
     private final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    public long getImages(String prompt, int numberOfImages) {
+    public long getImages(String model, String prompt, int numberOfImages) {
         ImageRequest request = new ImageRequest(
-                prompt, numberOfImages, "512x512", "b64_json");
+                model, prompt, numberOfImages, "standard", "1024x1024", "b64_json");
         ImageResponse response = sendImagePrompt(request);
         return response.data().stream()
                 .map(Image::b64Json)
@@ -40,10 +47,15 @@ public class DallE {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(imageRequest)))
                 .build();
+        logger.debug("URI: " + request.uri());
+        logger.debug("Headers: " + request.headers());
+        logger.debug("Body: " + gson.toJson(imageRequest));
         try {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Status: " + response.statusCode());
+            logger.debug("Status: " + response.statusCode());
+            logger.debug("Headers: " + response.headers());
+            logger.debug("Request: " + response.request());
             return gson.fromJson(response.body(), ImageResponse.class);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Error sending image prompt", e);

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +37,18 @@ class ChatGPTTest {
         List<ModelList.Model> gptModels = models.stream()
                 .filter(model -> model.id().contains("gpt"))
                 .peek(System.out::println)
+                .toList();
+        assertThat(gptModels)
+                .map(ModelList.Model::id)
+                .contains("gpt-3.5-turbo", "gpt-4");
+    }
+
+    @Test
+    void list_all_models() {
+        List<ModelList.Model> models = chat.listModels();
+        List<ModelList.Model> gptModels = models.stream()
+                .peek(System.out::println)
+                .sorted(Comparator.comparing(ModelList.Model::created))
                 .toList();
         assertThat(gptModels)
                 .map(ModelList.Model::id)
@@ -95,7 +108,7 @@ class ChatGPTTest {
         Message fileMessage = new Message(Role.SYSTEM,
                 FileUtils.readFile("src/main/resources/graal.srt"));
 
-        ChatRequest request = new ChatRequest(ChatGPT.GPT_4,
+        ChatRequest request = new ChatRequest(ChatGPT.GPT_4_TURBO,
                 List.of(systemMessage, fileMessage, quizMessage),
                 ChatGPT.DEFAULT_TEMPERATURE);
         ChatResponse response = chat.createChatResponse(request);
