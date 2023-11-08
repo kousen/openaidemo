@@ -23,12 +23,13 @@ class ChatGPTTest {
     void list_models() {
         List<ModelList.Model> models = chat.listModels();
         assertThat(models).isNotEmpty();
-        List<String> ownedByValues = models.stream()
-                .map(ModelList.Model::ownedBy)
+        List<String> ids = models.stream()
+                .sorted(Comparator.comparing(ModelList.Model::id))
+                .map(ModelList.Model::id)
                 .distinct()
                 .toList();
-        ownedByValues.forEach(System.out::println);
-        assertThat(ownedByValues).contains("openai", "system");
+        ids.forEach(System.out::println);
+        assertThat(ids).contains(ChatGPT.GPT_4, ChatGPT.GPT_4_TURBO);
     }
 
     @Test
