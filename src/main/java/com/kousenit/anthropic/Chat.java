@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kousenit.anthropic.json.ChatRequest;
 import com.kousenit.anthropic.json.ChatResponse;
+import com.kousenit.anthropic.json.GsonLocalDateAdapter;
 import com.kousenit.openai.chat.LowercaseEnumSerializer;
 import com.kousenit.openai.chat.Role;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
 
 public class Chat {
     private static final String CHAT_URL = "https://api.anthropic.com/v1/complete";
@@ -27,6 +29,7 @@ public class Chat {
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(Role.class, new LowercaseEnumSerializer())
+            .registerTypeAdapter(LocalDate.class, new GsonLocalDateAdapter())
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
@@ -34,7 +37,7 @@ public class Chat {
     public String getResponse(String prompt) {
         ChatRequest chatRequest = new ChatRequest(CLAUDE_2, formatPrompt(prompt),
                 256, DEFAULT_TEMPERATURE);
-        logger.info("Request: {}", chatRequest);
+        logger.debug("Request: {}", chatRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(CHAT_URL))
@@ -52,7 +55,7 @@ public class Chat {
                 throw new RuntimeException("Error: " + response.statusCode() + ": " + response.body());
             }
             ChatResponse chatResponse = gson.fromJson(response.body(), ChatResponse.class);
-            logger.info("Response: {}", chatResponse);
+            logger.debug("Response: {}", chatResponse);
             return chatResponse.completion();
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
