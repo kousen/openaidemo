@@ -3,6 +3,10 @@ package com.kousenit.openai.assistant;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.kousenit.openai.chat.Role;
+import com.kousenit.openai.json.Assistant;
+import com.kousenit.openai.json.AssistantThread;
+import com.kousenit.openai.json.Message;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,6 +16,7 @@ import java.net.http.HttpResponse;
 public class AccessMYM {
     private static final String MYM_ASSISTANT_ID = "asst_7ttDTA3qoaaDMLeo387TPWLM";
     private static final String ASSISTANT_URL = "https://api.openai.com/v1/assistants";
+    private static final String THREADS_URL = "https://api.openai.com/v1/threads";
 
     private final HttpClient client = HttpClient.newHttpClient();
 
@@ -49,5 +54,28 @@ public class AccessMYM {
             throw new RuntimeException(e);
         }
     }
+
+    public AssistantThread createThread(String content) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(THREADS_URL))
+                .header("Content-Type", "application/json")
+                .header("Authorization",
+                        "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
+                .header("OpenAI-Beta", "threads=v1")
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        gson.toJson(messageFromContent(content))))
+                .build();
+        try {
+            String response = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+            return gson.fromJson(response, AssistantThread.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Message messageFromContent(String content) {
+        return new Message(Role.USER, content);
+    }
+
 
 }

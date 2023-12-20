@@ -1,5 +1,7 @@
 package com.kousenit.openai.assistant;
 
+import com.kousenit.openai.json.Assistant;
+import com.kousenit.openai.json.Tool;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

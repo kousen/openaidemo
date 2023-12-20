@@ -1,4 +1,4 @@
-package com.kousenit.openai.assistant;
+package com.kousenit.openai.json;
 
 import java.util.List;
 import java.util.Map;
