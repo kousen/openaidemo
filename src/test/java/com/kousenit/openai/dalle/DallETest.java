@@ -26,10 +26,11 @@ class DallETest {
         long num = dallE.getImages(
                 DallE.DALL_E_3,
                 """
-                a photorealistic image of a happy robot jumping on springs,
-                thrilled that he accomplished a hard task
+                a photorealistic image of a happy robot
+                leaping into the air in joy
+                after accomplishing a hard task
                 """,
-                1);
+                1); // only one image at a time allowed for DALL-E 3
         System.out.printf("Downloaded %d images%n", num);
         assertThat(num).isEqualTo(1);
     }

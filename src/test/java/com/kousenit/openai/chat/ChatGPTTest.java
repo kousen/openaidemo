@@ -48,8 +48,8 @@ class ChatGPTTest {
     void list_all_models() {
         List<ModelList.Model> models = chat.listModels();
         List<ModelList.Model> gptModels = models.stream()
+                .sorted(Comparator.comparing(ModelList.Model::id))
                 .peek(System.out::println)
-                .sorted(Comparator.comparing(ModelList.Model::created))
                 .toList();
         assertThat(gptModels)
                 .map(ModelList.Model::id)
