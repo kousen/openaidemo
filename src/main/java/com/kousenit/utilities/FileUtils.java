@@ -49,8 +49,7 @@ public class FileUtils {
         Path directory = Paths.get(IMAGE_RESOURCES_PATH);
         Path filePath = directory.resolve(fileName);
         try {
-            byte[] bytes = Base64.getDecoder()
-                    .decode(imageData);
+            byte[] bytes = Base64.getDecoder().decode(imageData);
             Files.write(filePath, bytes, StandardOpenOption.CREATE_NEW);
             System.out.printf("Saved %s to %s%n", fileName, IMAGE_RESOURCES_PATH);
             return true;
