@@ -8,6 +8,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven { setUrl("https://jitpack.io") }
 }
 
 dependencies {
@@ -25,8 +26,11 @@ dependencies {
     implementation("org.openjfx:javafx-controls:17.0.1")
     implementation("org.openjfx:javafx-fxml:17.0.1")
 
+    implementation("com.github.umjammer:jlayer:1.0.2")
+
     testImplementation(platform("org.junit:junit-bom:5.10.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.junit.vintage:junit-vintage-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("org.mockito:mockito-core:5.8.0")
@@ -38,8 +42,8 @@ tasks.test {
 }
 
 javafx {
-    version = "17"
-    modules = listOf("javafx.controls", "javafx.fxml")
+    version = "21"
+    modules = listOf("javafx.controls", "javafx.fxml", "javafx.media")
 }
 
 application {
