@@ -33,7 +33,6 @@ public class TextToSpeech {
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(Role.class, new LowercaseEnumSerializer())
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
