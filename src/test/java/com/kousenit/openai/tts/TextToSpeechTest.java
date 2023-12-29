@@ -55,14 +55,10 @@ class TextToSpeechTest {
     @Test
     void generate_and_play_mp3() {
         tts.createAndPlay("""
-                But to be loved, and not... not to be... My heart
-                always timidly hides itself behind my mind. I am
-                the shadow of the willow tree, but my love is the
-                willow's shadow on the wall. My love is a wisp of
-                smoke in the moonlight. It's a reflection in a
-                mirror, a half-dreamed dream.
+                A large nose is the mark of a witty, courteous, affable,
+                generous, and liberal man.
                 """,
-                Voice.ONYX);
+                Voice.getRandomVoice());
     }
 
 }

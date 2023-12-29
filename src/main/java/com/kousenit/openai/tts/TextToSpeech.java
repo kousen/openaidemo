@@ -1,10 +1,7 @@
 package com.kousenit.openai.tts;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.kousenit.openai.chat.LowercaseEnumSerializer;
-import com.kousenit.openai.chat.Role;
 import com.kousenit.openai.json.TTSRequest;
 import com.kousenit.openai.json.Voice;
 import com.kousenit.utilities.FileUtils;
@@ -32,14 +29,14 @@ public class TextToSpeech {
     public final static String TTS_1_HD = "tts-1-hd";
 
     private final Gson gson = new GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .setPrettyPrinting()
             .create();
 
     private final HttpClient client = HttpClient.newHttpClient();
 
     public byte[] generateMp3(TTSRequest ttsRequest) {
         String postBody = gson.toJson(ttsRequest);
-        logger.debug(postBody);
+        logger.info("postBody = {}", postBody);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(TTS_URL))
@@ -49,9 +46,10 @@ public class TextToSpeech {
                 .build();
         try {
             HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            logger.debug(response.headers().toString());
             byte[] body = response.body();
-            FileUtils.writeSoundBytesToFile(body);
+            String fileName = FileUtils.writeSoundBytesToFile(body);
+            logger.info("Saved {} to {}", fileName, FileUtils.AUDIO_RESOURCES_PATH);
+            response.headers().map().forEach((k,v) -> logger.info("Header: {} = {}", k, v));
             return body;
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -59,7 +57,7 @@ public class TextToSpeech {
     }
 
     public void playMp3UsingJLayer(String fileName) {
-        BufferedInputStream buffer = new BufferedInputStream(
+        var buffer = new BufferedInputStream(
                 Objects.requireNonNull(getClass().getClassLoader()
                         .getResourceAsStream("audio/%s".formatted(fileName))));
         try {
@@ -71,7 +69,8 @@ public class TextToSpeech {
     }
 
     public void createAndPlay(String text, Voice voice) {
-        TTSRequest ttsRequest = new TTSRequest(TTS_1_HD, text, voice);
+        TTSRequest ttsRequest = new TTSRequest(TTS_1_HD,
+                text.replaceAll("\\s+", " ").trim(), voice);
         byte[] bytes = generateMp3(ttsRequest);
         var bufferedInputStream = new BufferedInputStream(new ByteArrayInputStream(bytes));
         try {
