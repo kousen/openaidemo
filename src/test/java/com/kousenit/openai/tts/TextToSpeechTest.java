@@ -39,10 +39,9 @@ class TextToSpeechTest {
                       source for learning about Java, Spring, and other open source
                       technologies, especially when combined with AI tools.
                       
-                      The companion newsletter, "Tales from the jar side" is also
-                      a lot of fun.
-                      """,
-                Voice.ALLOY
+                      The companion newsletter is also a lot of fun.
+                      """.replaceAll("\\s+", " ").trim(),
+                Voice.FABLE
         );
         tts.generateMp3(ttsRequest);
     }
