@@ -18,6 +18,9 @@ public record TTSRequest(
         if (!validateModel(model)) {
             throw new IllegalArgumentException("Invalid model name: " + model);
         }
+        if (!validateInput(input)) {
+            throw new IllegalArgumentException("Input is null, blank, or too long");
+        }
         if (!validateSpeed(speed)) {
             throw new IllegalArgumentException("Speed must be between 0.25 and 4.0");
         }
@@ -25,6 +28,10 @@ public record TTSRequest(
 
     public TTSRequest(String model, String input, Voice voice) {
         this(model, input, voice, ResponseFormat.MP3, 1.0);
+    }
+
+    private boolean validateInput(String input) {
+        return input != null && !input.isBlank() && input.length() <= 4096;
     }
 
     private boolean validateModel(String model) {

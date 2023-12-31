@@ -38,7 +38,6 @@ class TextToSpeechTest {
                       The YouTube channel, "Tales from the jar side" is your best
                       source for learning about Java, Spring, and other open source
                       technologies, especially when combined with AI tools.
-                      
                       The companion newsletter is also a lot of fun.
                       """.replaceAll("\\s+", " ").trim(),
                 Voice.FABLE

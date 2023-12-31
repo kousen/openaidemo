@@ -45,7 +45,8 @@ public class TextToSpeech {
                 .POST(HttpRequest.BodyPublishers.ofString(postBody))
                 .build();
         try {
-            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<byte[]> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofByteArray());
             byte[] body = response.body();
             String fileName = FileUtils.writeSoundBytesToFile(body);
             logger.info("Saved {} to {}", fileName, FileUtils.AUDIO_RESOURCES_PATH);
