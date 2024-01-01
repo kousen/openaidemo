@@ -26,6 +26,7 @@ public record TTSRequest(
         }
     }
 
+    // Required parameters only -- the rest are defaults
     public TTSRequest(String model, String input, Voice voice) {
         this(model, input, voice, ResponseFormat.MP3, 1.0);
     }

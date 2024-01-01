@@ -167,7 +167,7 @@ public class Picogen {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         return urls.stream()
                 .map(this::getImageBytes)
-                .filter(FileUtils::writeByteArrayToFile)
+                .filter(FileUtils::writeImageBytesToFile)
                 .count();
     }
 

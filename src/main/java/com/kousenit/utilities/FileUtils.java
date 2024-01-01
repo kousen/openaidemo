@@ -58,7 +58,7 @@ public class FileUtils {
         }
     }
 
-    public static boolean writeByteArrayToFile(byte[] bytes) {
+    public static boolean writeImageBytesToFile(byte[] bytes) {
         String timestamp = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String fileName = String.format("image_%s_%d.png", timestamp, counter++);
@@ -73,10 +73,7 @@ public class FileUtils {
         }
     }
 
-    public static String writeSoundBytesToFile(byte[] bytes) {
-        String timestamp = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String fileName = String.format("audio_%s.mp3", timestamp);
+    public static String writeSoundBytesToGivenFile(byte[] bytes, String fileName) {
         Path directory = Paths.get(AUDIO_RESOURCES_PATH);
         Path filePath = directory.resolve(fileName);
         try {
@@ -86,6 +83,13 @@ public class FileUtils {
         } catch (IOException e) {
             throw new UncheckedIOException("Error writing audio to file", e);
         }
+    }
+
+    public static String writeSoundBytesToFile(byte[] bytes) {
+        String timestamp = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String fileName = String.format("audio_%s.mp3", timestamp);
+        return writeSoundBytesToGivenFile(bytes, fileName);
     }
 
     public static void writeTextToFile(String textData, String fileName) {
