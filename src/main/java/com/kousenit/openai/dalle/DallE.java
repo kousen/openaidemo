@@ -28,8 +28,6 @@ public class DallE {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    private final HttpClient client = HttpClient.newHttpClient();
-
     public long getImages(String model, String prompt, int numberOfImages) {
         ImageRequest request = new ImageRequest(
                 model, prompt, numberOfImages, "standard", "1024x1024", "b64_json");
@@ -50,7 +48,7 @@ public class DallE {
         logger.debug("URI: " + request.uri());
         logger.debug("Headers: " + request.headers());
         logger.debug("Body: " + gson.toJson(imageRequest));
-        try {
+        try (HttpClient client = HttpClient.newHttpClient()) {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
             logger.debug("Status: " + response.statusCode());

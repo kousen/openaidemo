@@ -32,8 +32,6 @@ public class TextToSpeech {
             .setPrettyPrinting()
             .create();
 
-    private final HttpClient client = HttpClient.newHttpClient();
-
     public byte[] generateMp3(TTSRequest ttsRequest) {
         String postBody = gson.toJson(ttsRequest);
         logger.info("postBody = {}", postBody);
@@ -44,7 +42,7 @@ public class TextToSpeech {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(postBody))
                 .build();
-        try {
+        try (HttpClient client = HttpClient.newHttpClient()) {
             HttpResponse<byte[]> response =
                     client.send(request, HttpResponse.BodyHandlers.ofByteArray());
             byte[] body = response.body();
