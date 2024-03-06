@@ -11,6 +11,12 @@ repositories {
     maven { setUrl("https://jitpack.io") }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 dependencies {
     implementation("org.apache.httpcomponents.client5:httpclient5:5.3")
     implementation("com.google.code.gson:gson:2.10.1")
