@@ -32,7 +32,7 @@ class DallETest {
                 """,
                 1); // only one image at a time allowed for DALL-E 3
         System.out.printf("Downloaded %d images%n", num);
-        assertThat(num).isEqualTo(1);
+        assertThat(num).isOne();
     }
 
 }

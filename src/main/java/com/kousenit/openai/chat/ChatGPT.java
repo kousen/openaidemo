@@ -62,7 +62,7 @@ public class ChatGPT {
     public String getResponse(String prompt, String model, double temperature) {
         ChatRequest chatRequest = createChatRequest(prompt, model, temperature);
         ChatResponse chatResponse = createChatResponse(chatRequest);
-        return chatResponse.choices().get(0).message().content();
+        return chatResponse.choices().getFirst().message().content();
     }
 
     public ChatRequest createChatRequest(String prompt, String model, double temperature) {
@@ -83,7 +83,7 @@ public class ChatGPT {
     }
 
     public String extractStringResponse(ChatResponse chatResponse) {
-        return chatResponse.choices().get(0).message().content();
+        return chatResponse.choices().getFirst().message().content();
     }
 
     // Transmit the request to the OpenAI API and return the response
