@@ -27,6 +27,7 @@ dependencies {
     // Apache POI dependencies
     implementation("org.apache.poi:poi:5.2.5")
     implementation("org.apache.poi:poi-ooxml:5.2.5")
+    implementation("org.apache.commons:commons-compress:1.26.0") // avoid security issue in poi version
 
     // JavaFX dependencies
     implementation("org.openjfx:javafx-controls:17.0.1")
