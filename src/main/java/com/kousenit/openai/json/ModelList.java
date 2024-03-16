@@ -9,11 +9,8 @@ public record ModelList(String object, List<Model> data) {
     public record Model(String id, long created, String ownedBy) {
         @Override
         public String toString() {
-            return "Model{" +
-                   "id='" + id + '\'' +
-                   ", created=" + fromEpoch(created) +
-                   ", ownedBy='" + ownedBy + '\'' +
-                   '}';
+            return "Model{id='%s', created=%s, ownedBy='%s'}"
+                    .formatted(id, fromEpoch(created), ownedBy);
         }
 
         public static LocalDateTime fromEpoch(long epoch) {
