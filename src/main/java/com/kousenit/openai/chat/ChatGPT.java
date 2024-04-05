@@ -3,10 +3,7 @@ package com.kousenit.openai.chat;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.kousenit.openai.json.ChatRequest;
-import com.kousenit.openai.json.ChatResponse;
-import com.kousenit.openai.json.Message;
-import com.kousenit.openai.json.ModelList;
+import com.kousenit.openai.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +34,7 @@ public class ChatGPT {
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    public List<ModelList.Model> listModels() {
+    public List<Model> listModels() {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(MODELS_URL))
                 .header("Authorization",
@@ -48,7 +45,7 @@ public class ChatGPT {
                     client.send(request, HttpResponse.BodyHandlers.ofString());
             ModelList modelList = gson.fromJson(response.body(), ModelList.class);
             return modelList.data().stream()
-                    .sorted(Comparator.comparing(ModelList.Model::created).reversed())
+                    .sorted(Comparator.comparing(Model::created).reversed())
                     .toList();
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

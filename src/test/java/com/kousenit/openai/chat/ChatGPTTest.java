@@ -1,10 +1,7 @@
 package com.kousenit.openai.chat;
 
+import com.kousenit.openai.json.*;
 import com.kousenit.utilities.FileUtils;
-import com.kousenit.openai.json.ChatRequest;
-import com.kousenit.openai.json.ChatResponse;
-import com.kousenit.openai.json.Message;
-import com.kousenit.openai.json.ModelList;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -21,11 +18,11 @@ class ChatGPTTest {
 
     @Test
     void list_models() {
-        List<ModelList.Model> models = chat.listModels();
+        List<Model> models = chat.listModels();
         assertThat(models).isNotEmpty();
         List<String> ids = models.stream()
-                .sorted(Comparator.comparing(ModelList.Model::id))
-                .map(ModelList.Model::id)
+                .sorted(Comparator.comparing(Model::id))
+                .map(Model::id)
                 .distinct()
                 .toList();
         ids.forEach(System.out::println);
@@ -34,25 +31,25 @@ class ChatGPTTest {
 
     @Test
     void list_gpt_models() {
-        List<ModelList.Model> models = chat.listModels();
-        List<ModelList.Model> gptModels = models.stream()
+        List<Model> models = chat.listModels();
+        List<Model> gptModels = models.stream()
                 .filter(model -> model.id().contains("gpt"))
                 .peek(System.out::println)
                 .toList();
         assertThat(gptModels)
-                .map(ModelList.Model::id)
+                .map(Model::id)
                 .contains("gpt-3.5-turbo", "gpt-4");
     }
 
     @Test
     void list_all_models() {
-        List<ModelList.Model> models = chat.listModels();
-        List<ModelList.Model> gptModels = models.stream()
-                .sorted(Comparator.comparing(ModelList.Model::id))
+        List<Model> models = chat.listModels();
+        List<Model> gptModels = models.stream()
+                .sorted(Comparator.comparing(Model::id))
                 .peek(System.out::println)
                 .toList();
         assertThat(gptModels)
-                .map(ModelList.Model::id)
+                .map(Model::id)
                 .contains("gpt-3.5-turbo", "gpt-4");
     }
 
