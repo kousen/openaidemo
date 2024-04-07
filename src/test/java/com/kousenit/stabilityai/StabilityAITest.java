@@ -28,4 +28,11 @@ class StabilityAITest {
                 particularly difficult task.
                 """, 4);
     }
+
+    @Test
+    void stableImage() throws Exception {
+        stabilityAI.requestStableImage("""
+                Cats playing gin rummy
+                """);
+    }
 }
