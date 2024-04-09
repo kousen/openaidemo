@@ -110,7 +110,7 @@ public class StabilityAI {
     public void requestStableImage(String prompt) throws IOException {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost post = new HttpPost("https://api.stability.ai/v2beta/stable-image/generate/core");
-            post.setHeader("Authorization", "Bearer " + KEY);
+            post.setHeader("Authorization", "Bearer %s".formatted(KEY));
             post.setHeader("Accept", "image/*");
 
             HttpEntity entity = MultipartEntityBuilder.create()
@@ -128,7 +128,7 @@ public class StabilityAI {
                 String fileName = "stabilityai_%s_%s.png".formatted(
                         LocalDate.now(),
                         prompt.replaceAll("\\s+", "_").substring(0, 20));
-                Path filePath = Paths.get("src/main/resources/images", fileName);
+                Path filePath = Paths.get("src/main/resources/images/stablediffusion", fileName);
                 Files.write(filePath, EntityUtils.toByteArray(response.getEntity()));
                 System.out.println(filePath.toAbsolutePath() + " downloaded successfully.");
                 return null;

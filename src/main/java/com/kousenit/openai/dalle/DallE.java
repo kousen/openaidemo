@@ -45,15 +45,15 @@ public class DallE {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(imageRequest)))
                 .build();
-        logger.debug("URI: " + request.uri());
-        logger.debug("Headers: " + request.headers());
-        logger.debug("Body: " + gson.toJson(imageRequest));
+        logger.debug("URI: {}", request.uri());
+        logger.debug("Headers: {}", request.headers());
+        logger.debug("Body: {}", gson.toJson(imageRequest));
         try (HttpClient client = HttpClient.newHttpClient()) {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            logger.debug("Status: " + response.statusCode());
-            logger.debug("Headers: " + response.headers());
-            logger.debug("Request: " + response.request());
+            logger.debug("Status: {}", response.statusCode());
+            logger.debug("Headers: {}", response.headers());
+            logger.debug("Request: {}", response.request());
             return gson.fromJson(response.body(), ImageResponse.class);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Error sending image prompt", e);
