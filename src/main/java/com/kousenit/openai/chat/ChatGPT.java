@@ -21,7 +21,7 @@ public class ChatGPT {
 
     public final static String GPT_35_TURBO = "gpt-3.5-turbo";
     public final static String GPT_4 = "gpt-4";
-    public final static String GPT_4_TURBO = "gpt-4-turbo-preview";
+    public final static String GPT_4_TURBO = "gpt-4-turbo";
 
     public final static double DEFAULT_TEMPERATURE = 0.7;
 
