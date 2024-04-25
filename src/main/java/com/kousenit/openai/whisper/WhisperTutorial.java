@@ -50,8 +50,8 @@ public class WhisperTutorial {
 
     public String getResponse(String prompt, String transcription) {
         return chatGPT.getResponseToMessages(ChatGPT.GPT_4,
-                new Message(Role.SYSTEM, prompt),
-                new Message(Role.USER, transcription));
+                new Message(Role.USER, prompt),
+                new Message(Role.SYSTEM, transcription));
     }
 
     @SuppressWarnings("SameParameterValue")

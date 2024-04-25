@@ -13,4 +13,22 @@ public record ImageRequest(String model,
                            String quality,
                            String size,
                            String responseFormat) {
+
+    public ImageRequest {
+        if (n != null && (n < 1 || n > 10)) {
+            throw new IllegalArgumentException("n must be between 1 and 10");
+        }
+        if (!model.equals("dall-e-2") && !model.equals("dall-e-3")) {
+            throw new IllegalArgumentException("model must be dall-e-2 or dall-e-3");
+        }
+        if (!quality.equals("standard") && !quality.equals("hd")) {
+            throw new IllegalArgumentException("quality must be standard or hd");
+        }
+        if (!size.equals("256x256") && !size.equals("512x512") && !size.equals("1024x1024")) {
+            throw new IllegalArgumentException("size must be 256x256, 512x512, or 1024x1024");
+        }
+        if (!responseFormat.equals("url") && !responseFormat.equals("b64_json")) {
+            throw new IllegalArgumentException("responseFormat must be url or b64_json");
+        }
+    }
 }
