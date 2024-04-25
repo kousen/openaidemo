@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class ChatTest {
-    private final Chat chat = new Chat();
+class ClaudeChatTest {
+    private final ClaudeChat claudeChat = new ClaudeChat();
 
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class, new GsonLocalDateAdapter())
@@ -23,7 +23,7 @@ class ChatTest {
 
     @Test
     void getHHG2tGResponse() {
-        var response = chat.getResponse(
+        var response = claudeChat.getResponse(
                 """
                         According to Douglas Adams, what is the Ultimate Answer
                         to the Ultimate Question of Life, the Universe, and Everything?
@@ -35,13 +35,13 @@ class ChatTest {
 
     @Test
     void getResponseWithXML() {
-        var response = chat.getResponse("""
+        var response = claudeChat.getResponse("""
                 You are a Spring developer expert. Please generate a
                 multiple-choice quiz with 4 possible answers. The question
                 topic should be <topic>%s</topic>. Please use the latest
                 versions of Spring Boot and Spring Framework, which at the
                 time of this writing are 3.1 and 6.0, respectively.
-                                        
+                
                 Indicate with a * which answer or answers is/are correct.
                 Before answering, please think about the question within
                 <thinking></thinking> tags.
@@ -52,23 +52,23 @@ class ChatTest {
 
     @Test
     void extractDataIntoRecord() {
-        var response = chat.getResponse("""
+        var response = claudeChat.getResponse("""
                 Here is a Java record representing a person:
                 record Person(String firstName, String lastName, LocalDate dob) {}
-                                                
+                
                 Here is a passage of text that includes information about a person:
                 <person>
                 Captain Picard was born on the 13th of juillet, %d years from now,
                 in La Barre, France, Earth. His given name, Jean-Luc, is of French
                 origin and translates to "John Luke".
                 </person>
-                                                
+                
                 Please extract the relevant fields into a Person instance.
                 """.formatted(2305 - LocalDate.now().getYear())
         );
         assertThat(response).contains("Jean-Luc", "Picard", "record Person");
 
-        var jsonResponse = chat.getResponse("""
+        var jsonResponse = claudeChat.getResponse("""
                 The Java code in %s represents a Person record.
                 Please reply ONLY with its JSON representation, in this form:
                 {
@@ -104,7 +104,7 @@ class ChatTest {
     void parseJson() {
         String response = """
                 Here is the JSON representation of the Person instance:
-                                                                               
+                
                 ```json
                 {
                    "firstName": "Jean-Luc",
@@ -113,13 +113,13 @@ class ChatTest {
                 }
                 ```
                 JSON:  Here is the JSON representation of the Person instance:
-                                                                               
+                
                 {
                     "firstName": "Jean-Luc",
                     "lastName": "Picard",
                     "dob": "2305-07-13"
                 }
-                                                                               
+                
                 """;
         String json = parseJSONFromResponse(response);
         System.out.println(json);

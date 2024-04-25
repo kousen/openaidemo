@@ -29,12 +29,12 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-public class StabilityAI {
+public class SDXL {
     private static final String BASE_URL = "https://api.stability.ai";
     private static final String SDXL_ENGINE = "stable-diffusion-xl-1024-v1-0";
     private static final String KEY = System.getenv("STABILITY_API_KEY");
 
-    private final Logger logger = LoggerFactory.getLogger(StabilityAI.class);
+    private final Logger logger = LoggerFactory.getLogger(SDXL.class);
 
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()

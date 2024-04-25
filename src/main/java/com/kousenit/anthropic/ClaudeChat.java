@@ -18,13 +18,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 
-public class Chat {
+public class ClaudeChat {
     private static final String CHAT_URL = "https://api.anthropic.com/v1/complete";
     private static final String ANTHROPIC_API_KEY = System.getenv("ANTHROPIC_API_KEY");
     public final static String CLAUDE_2 = "claude-2";
     private static final double DEFAULT_TEMPERATURE = 0.7;
 
-    private final Logger logger = LoggerFactory.getLogger(Chat.class);
+    private final Logger logger = LoggerFactory.getLogger(ClaudeChat.class);
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)

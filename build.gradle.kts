@@ -1,6 +1,8 @@
 plugins {
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    alias(libs.plugins.versions)
+    alias(libs.plugins.version.catalog.update)
 }
 
 group = "com.kousenit"
@@ -18,31 +20,26 @@ java {
 }
 
 dependencies {
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.slf4j:slf4j-api:2.0.12")
-    implementation("org.slf4j:slf4j-simple:2.0.12")
-    implementation("org.apache.logging.log4j:log4j-core:2.22.0")
+    implementation(libs.httpclient)
+    implementation(libs.gson)
+    implementation(libs.slf4j)
+    implementation(libs.log4j)
 
     // Apache POI dependencies
-    implementation("org.apache.poi:poi:5.2.5")
-    implementation("org.apache.poi:poi-ooxml:5.2.5")
-    implementation("org.apache.commons:commons-compress:1.26.0") // avoid security issue in poi version
+    implementation(libs.bundles.poi)
+    implementation("org.apache.commons:commons-compress:1.26.1") // avoid security issue in poi version
 
     // JavaFX dependencies
     implementation("org.openjfx:javafx-controls:21.0.2")
     implementation("org.openjfx:javafx-fxml:21.0.2")
 
     // JLayer dependencies for playing mp3 files
-    implementation("com.github.umjammer:jlayer:1.0.2")
+    implementation(libs.jlayer)
 
-    testImplementation(platform("org.junit:junit-bom:5.10.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    testImplementation("org.assertj:assertj-core:3.25.3")
-    testImplementation("org.mockito:mockito-core:5.11.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
+    // Testing
+    testImplementation(libs.assertj)
+    testImplementation(libs.bundles.junit)
+    testImplementation(libs.bundles.mockito)
 }
 
 tasks.test {

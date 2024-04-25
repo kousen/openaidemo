@@ -4,24 +4,24 @@ import com.kousenit.stabilityai.json.Balance;
 import com.kousenit.stabilityai.json.Engines;
 import org.junit.jupiter.api.Test;
 
-class StabilityAITest {
-    private final StabilityAI stabilityAI = new StabilityAI();
+class SDXLTest {
+    private final SDXL SDXL = new SDXL();
 
     @Test
     void getBalance() {
-        Balance balance = stabilityAI.getBalance();
+        Balance balance = SDXL.getBalance();
         System.out.println(balance);
     }
 
     @Test
     void getEngines() {
-        Engines engines = stabilityAI.getEngines();
+        Engines engines = SDXL.getEngines();
         engines.engines().forEach(System.out::println);
     }
 
     @Test
     void sampleImage() {
-        stabilityAI.generateImages("""
+        SDXL.generateImages("""
                 A realistic photo of a happy
                 robot leaping into the air
                 in joy after accomplishing a
@@ -31,7 +31,7 @@ class StabilityAITest {
 
     @Test
     void stableImage() throws Exception {
-        stabilityAI.requestStableImage("""
+        SDXL.requestStableImage("""
                 Cats playing gin rummy
                 """);
     }

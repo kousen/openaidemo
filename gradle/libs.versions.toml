@@ -1,0 +1,43 @@
+[versions]
+assertj = "3.25.3"
+gson = "2.10.1"
+httpclient = "5.4-alpha2"
+jlayer = "1.0.3"
+junit = "5.11.0-M1"
+junitplatform = "1.11.0-M1"
+log4j = "3.0.0-beta2"
+mockito = "5.11.0"
+poi = "5.2.5"
+slf4j = "2.1.0-alpha1"
+
+[libraries]
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+httpclient = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient" }
+jlayer = { module = "com.github.umjammer:jlayer", version.ref = "jlayer" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitplatform" }
+log4j = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+poi = { module = "org.apache.poi:poi", version.ref = "poi" }
+poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
+slf4j = { module = "org.slf4j:slf4j-nop", version.ref = "slf4j" }
+
+[bundles]
+junit = [
+    "junit-jupiter",
+    "junit-platform-launcher",
+]
+mockito = [
+    "mockito-core",
+    "mockito-junit",
+]
+poi = [
+    "poi",
+    "poi-ooxml",
+]
+
+[plugins]
+version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.4"
+versions = "com.github.ben-manes.versions:0.51.0"
