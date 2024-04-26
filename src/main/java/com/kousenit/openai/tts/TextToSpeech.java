@@ -1,5 +1,6 @@
 package com.kousenit.openai.tts;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.kousenit.openai.json.TTSRequest;
@@ -30,6 +31,7 @@ public class TextToSpeech {
 
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
     public byte[] generateMp3(TTSRequest ttsRequest) {
