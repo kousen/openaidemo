@@ -14,12 +14,14 @@ public class OllamaRecords {
     }
 
     public record OllamaTextRequest(String model, String prompt, boolean stream)
-            implements OllamaRequest {}
+            implements OllamaRequest {
+    }
 
-    public record OllamaVisionRequest(String model,
-                                      String prompt,
-                                      boolean stream,
-                                      List<String> images)
+    public record OllamaVisionRequest(
+            String model,
+            String prompt,
+            boolean stream,
+            List<String> images)
             implements OllamaRequest {
 
         public OllamaVisionRequest {
@@ -31,7 +33,8 @@ public class OllamaRecords {
         private String encodeImage(String path) {
             try {
                 byte[] imageBytes = Files.readAllBytes(Paths.get(path));
-                return Base64.getEncoder().encodeToString(imageBytes);
+                return Base64.getEncoder()
+                        .encodeToString(imageBytes);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -39,7 +42,8 @@ public class OllamaRecords {
     }
 
 
-    public record OllamaResponse(String model, String createdAt, String response,
-                                  boolean done, long totalDuration, int promptEvalCount, int evalCount) {
+    public record OllamaResponse(
+            String model, String createdAt, String response,
+            boolean done, long totalDuration, int promptEvalCount, int evalCount) {
     }
 }
