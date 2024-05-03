@@ -40,9 +40,9 @@ public class MandelbrotSetGenerator {
         try {
             File outputImage = new File("MandelbrotSet.png");
             ImageIO.write(image, "png", outputImage);
-            System.out.println("Mandelbrot set image generated and saved as MandelbrotSet.png");
+            System.out.println("Mandelbrot set prompt generated and saved as MandelbrotSet.png");
         } catch (Exception e) {
-            System.err.println("Error while saving the image: " + e.getMessage());
+            System.err.println("Error while saving the prompt: " + e.getMessage());
         }
     }
 

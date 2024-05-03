@@ -56,7 +56,7 @@ public class DallE {
             logger.debug("Request: {}", response.request());
             return gson.fromJson(response.body(), ImageResponse.class);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("Error sending image prompt", e);
+            throw new RuntimeException("Error sending prompt prompt", e);
         }
     }
 }

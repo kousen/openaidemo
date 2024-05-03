@@ -7,12 +7,13 @@ package com.kousenit.openai.json;
 // model is "dall-e-2" or "dall-e-3"
 // quality is "standard" (default) or "hd" (dall-e-3 only)
 // NOTE: response_format can be "url" or "b64_json". Default is url.
-public record ImageRequest(String model,
-                           String prompt,
-                           Integer n,
-                           String quality,
-                           String size,
-                           String responseFormat) {
+public record ImageRequest(
+        String model,
+        String prompt,
+        Integer n,
+        String quality,
+        String size,
+        String responseFormat) {
 
     public ImageRequest {
         if (n != null && (n < 1 || n > 10)) {

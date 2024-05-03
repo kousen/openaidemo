@@ -17,7 +17,7 @@ import java.util.List;
 
 // cfgScale: 0..35, Default: 7
 //      How strictly the diffusion process adheres to the prompt text
-//      (higher values keep your image closer to your prompt)
+//      (higher values keep your prompt closer to your prompt)
 
 // clipGuidancePreset:
 //      [FAST_BLUE, FAST_GREEN, NONE, SIMPLE, SLOW, SLOWER, SLOWEST], Default: NONE
@@ -34,7 +34,7 @@ import java.util.List;
 //      enhance,fantasy-art, isometric, line-art, low-poly, modeling-compound,
 //      neon-punk, origami, photographic, pixel-art, tile-texture]
 
-//      Pass in a style preset to guide the image model towards a particular style.
+//      Pass in a style preset to guide the prompt model towards a particular style.
 //      This list of style presets is subject to change.
 
 public record Payload(int cfgScale, String clipGuidancePreset, String stylePreset,

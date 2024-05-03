@@ -27,7 +27,7 @@ public class ProcessResponse {
                 System.out.println(artifact.seed() + ": " + artifact.finishReason());
                 byte[] bytes = Base64.getDecoder().decode(artifact.base64());
                 try {
-                    Files.write(Path.of("image" + artifact.seed() + ".png"), bytes);
+                    Files.write(Path.of("prompt" + artifact.seed() + ".png"), bytes);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }

@@ -39,6 +39,7 @@ public class ChatGPT {
                 .uri(URI.create(MODELS_URL))
                 .header("Authorization",
                         "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
+                .header("Accept", "application/json")
                 .build();
         try {
             HttpResponse<String> response =
@@ -90,6 +91,7 @@ public class ChatGPT {
                 .header("Authorization",
                         "Bearer %s".formatted(System.getenv("OPENAI_API_KEY")))
                 .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(chatRequest)))
                 .build();
         try {

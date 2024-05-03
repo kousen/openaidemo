@@ -28,7 +28,7 @@ class DallETest {
                 """
                 cats playing canasta
                 """,
-                1); // only one image at a time allowed for DALL-E 3
+                1); // only one prompt at a time allowed for DALL-E 3
         System.out.printf("Downloaded %d images%n", num);
         assertThat(num).isOne();
     }

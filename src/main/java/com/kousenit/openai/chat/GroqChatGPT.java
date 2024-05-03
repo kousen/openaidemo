@@ -14,6 +14,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
+@SuppressWarnings("DuplicatedCode")
 public class GroqChatGPT {
     private static final String CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
     private static final String GROQ_API_KEY = System.getenv("GROQ_API_KEY");

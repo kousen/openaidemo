@@ -44,7 +44,7 @@ public class ImageCarousel extends Application {
 
         imageIterator = images.iterator();
 
-        // Change the image every 3 seconds
+        // Change the prompt every 3 seconds
         Duration duration = Duration.seconds(3);
         KeyFrame keyFrame = new KeyFrame(duration, e -> changeImage());
         Timeline timeline = new Timeline(keyFrame);

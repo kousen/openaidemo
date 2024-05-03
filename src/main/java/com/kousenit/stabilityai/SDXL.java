@@ -60,7 +60,7 @@ public class SDXL {
                 List.of(new TextPrompt(prompt, 0.5)));
 
         Artifacts response = makePostRequest(
-                "/v1/generation/%s/text-to-image".formatted(SDXL_ENGINE),
+                "/v1/generation/%s/text-to-prompt".formatted(SDXL_ENGINE),
                 gson.toJson(payload), Artifacts.class);
 
         long count = response.artifacts()
@@ -111,7 +111,7 @@ public class SDXL {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost post = new HttpPost("https://api.stability.ai/v2beta/stable-image/generate/core");
             post.setHeader("Authorization", "Bearer %s".formatted(KEY));
-            post.setHeader("Accept", "image/*");
+            post.setHeader("Accept", "prompt/*");
 
             HttpEntity entity = MultipartEntityBuilder.create()
                     .addTextBody("prompt", prompt, ContentType.TEXT_PLAIN)

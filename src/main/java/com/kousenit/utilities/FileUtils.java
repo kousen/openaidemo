@@ -54,7 +54,7 @@ public class FileUtils {
             System.out.printf("Saved %s to %s%n", fileName, IMAGE_RESOURCES_PATH);
             return true;
         } catch (IOException e) {
-            throw new UncheckedIOException("Error writing image to file", e);
+            throw new UncheckedIOException("Error writing prompt to file", e);
         }
     }
 
@@ -69,7 +69,7 @@ public class FileUtils {
             System.out.printf("Saved %s to %s%n", fileName, IMAGE_RESOURCES_PATH);
             return true;
         } catch (IOException e) {
-            throw new UncheckedIOException("Error writing image to file", e);
+            throw new UncheckedIOException("Error writing prompt to file", e);
         }
     }
 
