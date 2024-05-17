@@ -69,7 +69,7 @@ class ChatGPTTest {
                 the Universe, and Everything?
                 """);
         ChatRequest request = new ChatRequest(
-                ChatGPT.GPT_35_TURBO,
+                ChatGPT.GPT_4O,
                 List.of(userMessage),
                 ChatGPT.DEFAULT_TEMPERATURE);
         ChatResponse response = chat.createChatResponse(request);
