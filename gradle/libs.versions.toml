@@ -1,12 +1,12 @@
 [versions]
 assertj = "3.25.3"
-gson = "2.10.1"
+gson = "2.11.0"
 httpclient = "5.4-alpha2"
 jlayer = "1.0.3"
-junit = "5.11.0-M1"
-junitplatform = "1.11.0-M1"
+junit = "5.11.0-M2"
+junitplatform = "1.11.0-M2"
 log4j = "3.0.0-beta2"
-mockito = "5.11.0"
+mockito = "5.12.0"
 poi = "5.2.5"
 slf4j = "2.1.0-alpha1"
 

@@ -34,7 +34,39 @@ public class TextToSpeech {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    public byte[] generateMp3(TTSRequest ttsRequest) {
+    public byte[] generateMp3_v1(String model, String input, String voice) {
+        String postBody = """
+                {
+                    "model": "%s",
+                    "input": "%s",
+                    "voice": "%s"
+                }
+                """.formatted(model,
+                input.replaceAll("\\s+", " ").trim(),
+                voice);
+        System.out.println(postBody);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(TTS_URL))
+                .header("Authorization", "Bearer %s".formatted(OPENAI_API_KEY))
+                .header("Content-Type", "application/json")
+                .header("Accept", "audio/mpeg")
+                .POST(HttpRequest.BodyPublishers.ofString(postBody))
+                .build();
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            HttpResponse<byte[]> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            byte[] body = response.body();
+            String fileName = FileUtils.writeSoundBytesToFile(body);
+            logger.info("Saved {} to {}", fileName, FileUtils.AUDIO_RESOURCES_PATH);
+            return body;
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public byte[] generateMp3_v2(TTSRequest ttsRequest) {
         String postBody = gson.toJson(ttsRequest);
         logger.info("postBody = {}", postBody);
 
@@ -50,7 +82,9 @@ public class TextToSpeech {
             byte[] body = response.body();
             String fileName = FileUtils.writeSoundBytesToFile(body);
             logger.info("Saved {} to {}", fileName, FileUtils.AUDIO_RESOURCES_PATH);
-            response.headers().map().forEach((k,v) -> logger.info("Header: {} = {}", k, v));
+            response.headers()
+                    .map()
+                    .forEach((k, v) -> logger.info("Header: {} = {}", k, v));
             return body;
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -71,8 +105,9 @@ public class TextToSpeech {
 
     public void createAndPlay(String text, Voice voice) {
         TTSRequest ttsRequest = new TTSRequest(TTS_1_HD,
-                text.replaceAll("\\s+", " ").trim(), voice);
-        byte[] bytes = generateMp3(ttsRequest);
+                text.replaceAll("\\s+", " ")
+                        .trim(), voice);
+        byte[] bytes = generateMp3_v2(ttsRequest);
         var bufferedInputStream = new BufferedInputStream(new ByteArrayInputStream(bytes));
         try {
             new Player(bufferedInputStream).play();

@@ -23,12 +23,10 @@ public class OllamaService {
 
     public OllamaResponse generate(OllamaRequest request) {
         switch (request) {
-            case OllamaTextRequest textRequest -> {
-                System.out.printf("Generating text response from %s...%n", textRequest.model());
-            }
-            case OllamaVisionRequest visionRequest -> {
-                System.out.printf("Generating vision response from %s...%n", visionRequest.model());
-            }
+            case OllamaTextRequest textRequest ->
+                    System.out.printf("Generating text response from %s...%n", textRequest.model());
+            case OllamaVisionRequest visionRequest ->
+                    System.out.printf("Generating vision response from %s...%n", visionRequest.model());
         }
         try (HttpClient client = HttpClient.newHttpClient()) {
             HttpRequest httpRequest = HttpRequest.newBuilder()
