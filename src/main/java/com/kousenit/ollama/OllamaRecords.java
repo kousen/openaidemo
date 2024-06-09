@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,4 +47,25 @@ public class OllamaRecords {
             String model, String createdAt, String response,
             boolean done, long totalDuration, int promptEvalCount, int evalCount) {
     }
+
+    // List models
+    public record OllamaModel(
+            String name,
+            OffsetDateTime modifiedAt,
+            long size,
+            String digest,
+            Details details
+    ) {}
+
+    public record Details(
+            String format,
+            String family,
+            List<String> families,
+            String parameterSize,
+            String quantizationLevel
+    ) {}
+
+    public record OllamaModels(
+            List<OllamaModel> models
+    ) {}
 }

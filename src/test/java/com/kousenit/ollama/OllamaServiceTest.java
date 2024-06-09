@@ -1,12 +1,17 @@
 package com.kousenit.ollama;
 
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static com.kousenit.ollama.OllamaRecords.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class OllamaServiceTest {
     private final OllamaService service = new OllamaService();
 
@@ -40,4 +45,14 @@ class OllamaServiceTest {
         System.out.println(response);
     }
 
+    @Test
+    void list_local_models() {
+        OllamaModels models = service.listLocalModels();
+        assertThat(models.models()).isNotEmpty();
+        models.models()
+                .stream()
+                .sorted(Comparator.comparing(OllamaModel::modifiedAt)
+                        .thenComparing(OllamaModel::name))
+                .forEach(System.out::println);
+    }
 }

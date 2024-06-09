@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.OffsetDateTime;
 
 import static com.kousenit.ollama.OllamaRecords.*;
 
@@ -19,7 +20,22 @@ public class OllamaService {
 
     private final Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeDeserializer())
             .create();
+
+    public OllamaModels listLocalModels() {
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("%s/api/tags".formatted(OLLAMA_BASE_URL)))
+                    .header("Accept", "application/json")
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return gson.fromJson(response.body(), OllamaModels.class);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public OllamaResponse generate(OllamaRequest request) {
         switch (request) {
