@@ -1,13 +1,119 @@
 # Labs
 
-## Lab 1: Install Ollama
+## Generate Audio from Text
+
+- At the [OpenAI developer site](https://platform.openai.com/docs/overview), sign up for an account and create an API key. Currently the link to your API keys is at https://platform.openai.com/api-keys . OpenAI now recommends project API keys. See [this page](https://help.openai.com/en/articles/9186755-managing-your-work-in-the-api-platform-with-projects) for more information.
+- Add the API key to an environment variable called `OPENAI_API_KEY`.
+- Create a new Java project in your favorite IDE with either Gradle or Maven as your build tool.
+- Review the documentation for the Open AI [Text-to-speech](https://platform.openai.com/docs/guides/text-to-speech) API.
+- Create a new class called `TextToSpeechService` in a package of your choosing.
+- Add a method called `generateMp3` that takes a text string and returns a `byte[]`. The method should take three arguments:
+  - `model` of type `String`
+  - `input` of type `String`
+  - `voice` of type `String`
+
+- Add a local variable called `payload`, which is a JSON string that contains the text you want to convert to speech:
+
+```java
+String payload = """
+    {
+        "model": "%s",
+        "input": "%s",
+        "voice": "%s"
+    }
+    """.formatted(model, input.replaceAll("\\s+", " ").trim(), voice);
+```
+
+- For those parameters:
+  - The value of the `model` variable must be either `tts-1` or `tts-1-hd`. The non-hd version is almost certainly good enough, but use whichever one you prefer.
+  - The value of `voice` must be one of: `alloy`, `echo`, `fable`, `onyx`, `nova`, or `shimmer`. Pick any one you like.
+  - The `input` parameter is the text you wish to convert to an mp3.
+
+- Next, create an `HttpRequest` object that will include the `payload` in a POST request:
+
+```java
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.openai.com/v1/audio/speech"))
+    .header("Authorization", "Bearer %s".formatted(OPENAI_API_KEY))
+    .header("Content-Type", "application/json")
+    .header("Accept", "audio/mpeg")
+    .POST(HttpRequest.BodyPublishers.ofString(payload))
+    .build();
+```
+
+- You'll want to save the returned byte array to a file. Here are static methods you can add to a `FileUtils` class for that purpose. First add an attribute to the `FileUtils` class for the destination directory:
+
+```java
+public static final String AUDIO_RESOURCES_PATH = "src/main/resources/audio";
+```
+
+- Then add the following methods to the class:
+
+```java
+public static String writeSoundBytesToFile(byte[] bytes) {
+    String timestamp = LocalDateTime.now()
+        .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    String fileName = String.format("audio_%s.mp3", timestamp);
+    return writeSoundBytesToGivenFile(bytes, fileName);
+}
+
+public static String writeSoundBytesToGivenFile(byte[] bytes, String fileName) {
+    Path directory = Paths.get(AUDIO_RESOURCES_PATH);
+    Path filePath = directory.resolve(fileName);
+    try {
+        Files.write(filePath, bytes, StandardOpenOption.CREATE_NEW);
+        System.out.printf("Saved %s to %s%n", fileName, AUDIO_RESOURCES_PATH);
+        return fileName;
+    } catch (IOException e) {
+        throw new UncheckedIOException("Error writing audio to file", e);
+    }
+}
+```
+
+- Now you can create an HTTP request to the OpenAI API, send it, and save the returned byte array to a file. Here is the complete `generateMp3` method:
+
+```java
+try (HttpClient client = HttpClient.newHttpClient()) {
+    HttpResponse<byte[]> response =
+        client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+    byte[] body = response.body();
+    String fileName = FileUtils.writeSoundBytesToFile(body);
+    return body;
+} catch (IOException | InterruptedException e) {
+        throw new RuntimeException(e);
+}
+```
+
+- Add a test to drive the system:
+
+```java
+    
+@Test
+void test_generateMp3() {
+    var service = new TextToSpeechService();
+    byte[] result = service.generateMp3(
+            "tts-1",
+            """
+            Now that I understand how to generate audio from text,
+            I can use this feature in all my applications.
+            """,
+            "fable"
+    );
+    assertNotNull(result);
+    assertTrue(result.length > 0);
+}
+```
+
+- Run the test. The console should show the name of the generated file, which will be inside the `src/main/resources/audio` folder. You can play the file to hear the text you provided.  
+
+## Install Ollama
 
 - Download the latest version of Ollama from the [Ollama website](https://ollama.com). 
 - Run the installer and follow the instructions. 
 - From a command prompt, enter `ollama run llama3` to download and install llama3 locally. 
 - Feel free to enter some prompts when the download completes. When you're finished, type `/bye` to exit.
 
-## Lab 2: Access Ollama programmatically
+## Lab: Access Ollama programmatically
 
 - Verify Ollama is running by entering [http://localhost:11434](http://localhost:11434) in a browser. You should get back the string, `Ollama is running`.
 - Create a Java project in your favorite IDE with either Gradle or Maven as your build tool.
@@ -74,7 +180,7 @@ public class OllamaServiceTest {
 * Add a `public static final String` constant called `LLAMA3` whose value is "llama3".
 * Update the test to use that model instead of hardcoding the value.
 
-## Lab 3: Parse the strings into records
+## Parse JSON into records
 
 - Create a new class called `OllamaRecords`. Inside it, add a record called `OllamaRequest` with the following fields:
   - `model` of type `String`
@@ -82,9 +188,10 @@ public class OllamaServiceTest {
   - `stream` of type `boolean`
 
 ```java
-public record OllamaRequest(String model, 
-                            String prompt, 
-                            boolean stream) {}
+public record OllamaRequest(
+        String model, 
+        String prompt, 
+        boolean stream) {}
 ```
 
 - Create a new record called `OllamaResponse` with the following fields:
@@ -96,13 +203,14 @@ public record OllamaRequest(String model,
   - `evalCount` of type `int`
 
 ```java
-public record OllamaResponse(String model, 
-                             String createdAt, 
-                             String response,
-                             boolean done, 
-                             long totalDuration, 
-                             int promptEvalCount, 
-                             int evalCount) {}
+public record OllamaResponse(
+        String model, 
+        String createdAt, 
+        String response,
+        boolean done, 
+        long totalDuration, 
+        int promptEvalCount, 
+        int evalCount) {}
 ```
 
 * In your build file (`build.gradle` or `build.gradle.kts` for Gradle, `pom.xml` for Maven), add the following dependencies:
@@ -110,7 +218,7 @@ public record OllamaResponse(String model,
 
 ```groovy
 dependencies {
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.11.0'
 }
 ```
     
@@ -120,12 +228,12 @@ dependencies {
 <dependency>
     <groupId>com.google.code.gson</groupId>
     <artifactId>gson</artifactId>
-    <version>2.10.1</version>
+    <version>2.11.0</version>
 </dependency>
 ```
 
 * Add an overload of the `generate` method to `OllamaService` that takes an `OllamaRequest` object and returns an `OllamaResponse` object.
-  * Add an attribute to the class of type `Gson`. Use the `GsonBuilder` class to configure a `Gson` instance:
+* Add an attribute to the class of type `Gson`. Use the `GsonBuilder` class to configure a `Gson` instance:
     
   ```java
   private final Gson gson = new GsonBuilder()
@@ -145,7 +253,7 @@ String request = gson.toJson(request);
 * Update the method to return an `OllamaResponse` object by parsing the JSON response from the server.
 
 ```java
-OllamaResponse response = gson.fromJson(response.body(), OllamaResponse.class);
+var response = gson.fromJson(response.body(), OllamaResponse.class);
 ```
   
 * Update the original `generate` method to call the new method with the `OllamaRequest` object.
@@ -170,7 +278,7 @@ public void testGenerateRequest() {
 
 * Update the previous test to use the new method signature.
 
-## Lab 4: Create a vision request
+## Create a vision request
 
 * Ollama also supports vision models, like `llava`, that can read images and generate text descriptions from them. The images must be uploaded in the form of Base 64 encoded strings.
 * Create a new record called `OllamaVisionRequest` with the following fields:
@@ -180,10 +288,11 @@ public void testGenerateRequest() {
   - `images` of type `List<String>`
 
 ```java
-public record OllamaVisionRequest(String model, 
-                                  String image, 
-                                  boolean stream, 
-                                  List<String> images) {}
+public record OllamaVisionRequest(
+        String model, 
+        String image, 
+        boolean stream, 
+        List<String> images) {}
 ```
 
 * Fortunately, the response is the same as the text models, so you can reuse the `OllamaResponse` record.
@@ -191,10 +300,11 @@ public record OllamaVisionRequest(String model,
 * Inside the `OllamaVisionRequest` record, add a compact constructor that takes a `String` path to a local image and converts it to a Base 64 encoded string.
 
 ```java
-public record OllamaVisionRequest(String model, 
-                                  String image, 
-                                  boolean stream, 
-                                  List<String> images) {
+public record OllamaVisionRequest(
+        String model, 
+        String image, 
+        boolean stream, 
+        List<String> images) {
                            
     public OllamaVisionRequest {
         images = images.stream()
@@ -251,7 +361,7 @@ switch (request) {
 }
 ```
 
-## Lab 5: Have a conversation
+## Have a conversation
 
 * Ollama also supports conversation models that can have a conversation with you. You need to add the messages yourself in a list, alternating between `user` and `assistant` messages.
 * Ollama supports a different endpoint for this. You send a POST request to `/api/chat` instead of `/api/generate`.
@@ -283,9 +393,10 @@ switch (request) {
   - 'temperature' of type `double`
 
 ```java
-public record OllamaChatRequest(String model, 
-                                List<OllamaMessage> messages,
-                                boolean stream) {}
+public record OllamaChatRequest(
+        String model, 
+        List<OllamaMessage> messages,
+        boolean stream) {}
 ```
 
 * Create a new record called `OllamaMessage` with the following fields:
@@ -307,13 +418,14 @@ public record OllamaMessage(String role,
   - `evalCount` of type `int`
 
 ```java
-public record OllamaChatResponse(String model, 
-                                 String createdAt, 
-                                 List<OllamaMessage> messages,
-                                 boolean done, 
-                                 long totalDuration, 
-                                 int promptEvalCount, 
-                                 int evalCount) {}
+public record OllamaChatResponse(
+        String model, 
+        String createdAt, 
+        List<OllamaMessage> messages,
+        boolean done, 
+        long totalDuration, 
+        int promptEvalCount, 
+        int evalCount) {}
 ```
 
 * Add a new method to `OllamaService` called `chat` that takes an `OllamaChatRequest` object and returns a `List<OllamaMessage>` object.
