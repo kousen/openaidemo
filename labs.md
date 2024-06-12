@@ -339,7 +339,10 @@ public sealed interface OllamaRequest permits OllamaTextRequest, OllamaVisionReq
 @Test
 void test_vision_generate() {
     var request = new OllamaVisionRequest(OllamaService.LLAVA,
-            "describe the included image",
+            """
+            Generate a text description of this image
+            suitable for accessibility in HTML.
+            """,
             false,
             List.of("src/main/resources/images/stablediffusion/cats_playing_cards.png"));
     OllamaResponse response = service.generate(request);
