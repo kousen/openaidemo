@@ -68,4 +68,22 @@ public class OllamaRecords {
     public record OllamaModels(
             List<OllamaModel> models
     ) {}
+
+    // Streaming models
+    record OllamaStreamingResponse(
+            String model,
+            String createdAt,
+            String response,
+            boolean done) {
+    }
+
+    record OllamaCompletedResponse(
+            String model, String createdAt, String response,
+            boolean done, String doneReason,
+            List<Integer> context,
+            long totalDuration, long loadDuration,
+            int promptEvalCount, int promptEvalDuration,
+            int evalCount, int evalDuration) {
+    }
+
 }

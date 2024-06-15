@@ -55,4 +55,9 @@ class OllamaServiceTest {
                         .thenComparing(OllamaModel::name))
                 .forEach(System.out::println);
     }
+
+    @Test
+    void streaming() {
+        service.streaming("orca-mini", "The model name is orca-mini. What does that mean?");
+    }
 }

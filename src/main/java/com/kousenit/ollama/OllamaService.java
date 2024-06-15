@@ -10,6 +10,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.OffsetDateTime;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static com.kousenit.ollama.OllamaRecords.*;
 
@@ -80,5 +82,51 @@ public class OllamaService {
 //        } catch (IOException | InterruptedException e) {
 //            throw new RuntimeException(e);
 //        }
+    }
+
+    public void streaming(String model, String prompt) {
+        String url = "http://localhost:11434/api/generate";
+        String jsonRequestBody = """
+                {
+                    "model": "%s",
+                    "prompt": "%s"
+                }""".formatted(model, prompt);
+
+        CompletableFuture<Void> future;
+        try (var client = HttpClient.newHttpClient()) {
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "text/event-stream")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonRequestBody))
+                    .build();
+
+            future = client.sendAsync(request, HttpResponse.BodyHandlers.ofLines())
+                    .thenAccept(response -> response.body().forEach(line -> {
+                                if (!line.contains("\"done\":true")) {
+                                    // Process each line of the response
+                                    var ollamaStreamingResponse =
+                                            gson.fromJson(line, OllamaStreamingResponse.class);
+                                    System.out.print(ollamaStreamingResponse.response());
+                                } else {
+                                    // If "done" is true, the response is complete
+                                    var ollamaCompletedResponse =
+                                            gson.fromJson(line, OllamaCompletedResponse.class);
+                                    System.out.println(ollamaCompletedResponse);
+                                    System.out.println("\nResponse is complete");
+                                    double speed =
+                                            (double) ollamaCompletedResponse.evalCount() / ollamaCompletedResponse.evalDuration()
+                                                   * 10e9;
+                                    System.out.printf("Speed: %.2f tokens/sec%n", speed);
+                                }
+                            }));
+        }
+
+        // Optionally, wait for the future to complete if you want to block the main thread
+        try {
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error processing streaming response: " + e.getMessage());
+        }
     }
 }
