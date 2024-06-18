@@ -58,6 +58,7 @@ class OllamaServiceTest {
 
     @Test
     void streaming() {
-        service.streaming("orca-mini", "The model name is orca-mini. What does that mean?");
+        service.streaming("orca-mini",
+                "Why didn't Frodo just fly to Mordor on the back of a giant eagle?");
     }
 }

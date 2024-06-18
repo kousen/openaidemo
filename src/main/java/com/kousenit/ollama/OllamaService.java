@@ -85,17 +85,13 @@ public class OllamaService {
     }
 
     public void streaming(String model, String prompt) {
-        String url = "http://localhost:11434/api/generate";
-        String jsonRequestBody = """
-                {
-                    "model": "%s",
-                    "prompt": "%s"
-                }""".formatted(model, prompt);
+        var ollamaTextRequest = new OllamaTextRequest(model, prompt, true);
+        String jsonRequestBody = gson.toJson(ollamaTextRequest);
 
         CompletableFuture<Void> future;
         try (var client = HttpClient.newHttpClient()) {
             var request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
+                    .uri(URI.create("%s/api/generate".formatted(OLLAMA_BASE_URL)))
                     .header("Content-Type", "application/json")
                     .header("Accept", "text/event-stream")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonRequestBody))
