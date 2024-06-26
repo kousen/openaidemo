@@ -22,7 +22,7 @@ public class GeminiApiClientTest {
         CachedContent cachedContent = new CachedContent(
                 List.of(content),
                 null, null, null, null,
-                null, "600s", null, "Example Content",
+                null, "600s", null, "Mockito Made Clear",
                 "models/gemini-1.5-flash-001", null, null
         );
 

@@ -57,7 +57,7 @@ public class MonitorFineTune {
     private static void listFineTuneEvents(CloseableHttpClient httpClient, String fineTuneJobId) throws IOException {
         String url = String.format("https://api.openai.com/v1/fine_tuning/jobs/%s/events", fineTuneJobId);
 
-        HttpGet httpGet = new HttpGet(url);
+        var httpGet = new HttpGet(url);
         httpGet.setHeader("Authorization", "Bearer " + API_KEY);
 
         HttpClientResponseHandler<String> responseHandler = response -> {
