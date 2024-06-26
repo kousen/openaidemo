@@ -1,27 +1,27 @@
 package com.kousenit.gemini;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.kousenit.gemini.GeminiRecords.SafetySetting.*;
+import static com.kousenit.gemini.GeminiRecords.SafetySetting.SafetyCategory;
 
 public class GeminiRecords {
 
     public record CachedContent(
             List<Content> contents,
             List<Tool> tools,
-            @JsonProperty("createTime") String createTime,
-            @JsonProperty("updateTime") String updateTime,
-            @JsonProperty("usageMetadata") CachedUsageMetadata usageMetadata,
-            @JsonProperty("expireTime") String expireTime,
+            @SerializedName("createTime") String createTime,
+            @SerializedName("updateTime") String updateTime,
+            @SerializedName("usageMetadata") CachedUsageMetadata usageMetadata,
+            @SerializedName("expireTime") String expireTime,
             String ttl,
             String name,
-            @JsonProperty("displayName") String displayName,
+            @SerializedName("displayName") String displayName,
             String model,
-            @JsonProperty("systemInstruction") Content systemInstruction,
-            @JsonProperty("toolConfig") ToolConfig toolConfig
+            @SerializedName("systemInstruction") Content systemInstruction,
+            @SerializedName("toolConfig") ToolConfig toolConfig
     ) {}
 
     public record Content(
@@ -31,14 +31,14 @@ public class GeminiRecords {
 
     public record Part(
             String text,
-            @JsonProperty("inlineData") Blob inlineData,
-            @JsonProperty("functionCall") FunctionCall functionCall,
-            @JsonProperty("functionResponse") FunctionResponse functionResponse,
-            @JsonProperty("fileData") FileData fileData
+            @SerializedName("inlineData") Blob inlineData,
+            @SerializedName("functionCall") FunctionCall functionCall,
+            @SerializedName("functionResponse") FunctionResponse functionResponse,
+            @SerializedName("fileData") FileData fileData
     ) {}
 
     public record Blob(
-            @JsonProperty("mimeType") String mimeType,
+            @SerializedName("mimeType") String mimeType,
             String data
     ) {}
 
@@ -53,12 +53,12 @@ public class GeminiRecords {
     ) {}
 
     public record FileData(
-            @JsonProperty("mimeType") String mimeType,
-            @JsonProperty("fileUri") String fileUri
+            @SerializedName("mimeType") String mimeType,
+            @SerializedName("fileUri") String fileUri
     ) {}
 
     public record Tool(
-            @JsonProperty("functionDeclarations") List<FunctionDeclaration> functionDeclarations
+            @SerializedName("functionDeclarations") List<FunctionDeclaration> functionDeclarations
     ) {}
 
     public record FunctionDeclaration(
@@ -83,12 +83,12 @@ public class GeminiRecords {
     }
 
     public record ToolConfig(
-            @JsonProperty("functionCallingConfig") FunctionCallingConfig functionCallingConfig
+            @SerializedName("functionCallingConfig") FunctionCallingConfig functionCallingConfig
     ) {}
 
     public record FunctionCallingConfig(
             Mode mode,
-            @JsonProperty("allowedFunctionNames") List<String> allowedFunctionNames
+            @SerializedName("allowedFunctionNames") List<String> allowedFunctionNames
     ) {
         public enum Mode {
             MODE_UNSPECIFIED, AUTO, ANY, NONE
@@ -97,18 +97,18 @@ public class GeminiRecords {
 
     // UsageMetadata specifically for cached content
     public record CachedUsageMetadata(
-            @JsonProperty("totalTokenCount") int totalTokenCount
+            @SerializedName("totalTokenCount") int totalTokenCount
     ) {}
 
     // New records for GenerateContentRequest and GenerateContentResponse
     public record GenerateContentRequest(
             List<Content> contents,
             List<Tool> tools,
-            @JsonProperty("toolConfig") ToolConfig toolConfig,
-            @JsonProperty("safetySetting") List<SafetySetting> safetySettings,
-            @JsonProperty("systemInstruction") Content systemInstruction,
-            @JsonProperty("generationConfig") GenerationConfig generationConfig,
-            @JsonProperty("cachedContent") String cachedContent
+            @SerializedName("toolConfig") ToolConfig toolConfig,
+            @SerializedName("safetySetting") List<SafetySetting> safetySettings,
+            @SerializedName("systemInstruction") Content systemInstruction,
+            @SerializedName("generationConfig") GenerationConfig generationConfig,
+            @SerializedName("cachedContent") String cachedContent
     ) {}
 
     public record SafetySetting(
@@ -122,9 +122,9 @@ public class GeminiRecords {
     }
 
     public record GenerationConfig(
-            @JsonProperty("stopSequences") List<String> stopSequences,
-            @JsonProperty("responseMimeType") String responseMimeType,
-            @JsonProperty("maxOutputTokens") int maxOutputTokens,
+            @SerializedName("stopSequences") List<String> stopSequences,
+            @SerializedName("responseMimeType") String responseMimeType,
+            @SerializedName("maxOutputTokens") int maxOutputTokens,
             double temperature,
             double topP,
             double topK
@@ -132,14 +132,14 @@ public class GeminiRecords {
 
     public record GenerateContentResponse(
             List<Candidate> candidates,
-            @JsonProperty("promptFeedback") PromptFeedback promptFeedback,
-            @JsonProperty("usageMetadata") GenerationUsageMetadata usageMetadata
+            @SerializedName("promptFeedback") PromptFeedback promptFeedback,
+            @SerializedName("usageMetadata") GenerationUsageMetadata usageMetadata
     ) {}
 
     public record Candidate(
             Content content,
-            @JsonProperty("finishReason") FinishReason finishReason,
-            @JsonProperty("safetyRatings") List<SafetyRating> safetyRatings
+            @SerializedName("finishReason") FinishReason finishReason,
+            @SerializedName("safetyRatings") List<SafetyRating> safetyRatings
     ) {}
 
     public record SafetyRating(
@@ -148,8 +148,8 @@ public class GeminiRecords {
     ) {}
 
     public record PromptFeedback(
-            @JsonProperty("blockReason") BlockReason blockReason,
-            @JsonProperty("safetyRatings") List<SafetyRating> safetyRatings
+            @SerializedName("blockReason") BlockReason blockReason,
+            @SerializedName("safetyRatings") List<SafetyRating> safetyRatings
     ) {}
 
     public enum BlockReason {
@@ -162,9 +162,9 @@ public class GeminiRecords {
 
     // UsageMetadata specifically for content generation
     public record GenerationUsageMetadata(
-            @JsonProperty("promptTokenCount") int promptTokenCount,
-            @JsonProperty("cachedContentToken") int cachedContentTokenCount,
-            @JsonProperty("candidatesTokenCount") int candidatesTokenCount,
-            @JsonProperty("totalTokenCount") int totalTokenCount
+            @SerializedName("promptTokenCount") int promptTokenCount,
+            @SerializedName("cachedContentTokenCount") int cachedContentTokenCount,
+            @SerializedName("candidatesTokenCount") int candidatesTokenCount,
+            @SerializedName("totalTokenCount") int totalTokenCount
     ) {}
 }
