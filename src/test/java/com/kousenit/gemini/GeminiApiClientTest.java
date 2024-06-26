@@ -2,36 +2,45 @@ package com.kousenit.gemini;
 
 import com.kousenit.utilities.PDFTextExtractor;
 import org.apache.tika.exception.TikaException;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static com.kousenit.gemini.GeminiRecords.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.*;
 
 public class GeminiApiClientTest {
+    private final GeminiApiClient client = new GeminiApiClient();
 
     @Test
     public void testCreateCachedContent() throws Exception {
         // Create a sample CachedContent instance
-        Part part = new Part(readMockitoBook(),
-                null, null, null, null);
+        Part part = new Part(readMockitoBook(), null, null, null, null);
         Content content = new Content(List.of(part), "user");
         CachedContent cachedContent = new CachedContent(
-                List.of(content),
-                null, null, null, null,
+                List.of(content), null, null, null, null,
                 null, "600s", null, "Mockito Made Clear",
                 "models/gemini-1.5-flash-001", null, null
         );
 
         // Call the createCachedContent method
-        CachedContent createdContent = GeminiApiClient.createCachedContent(cachedContent);
-        assertNotNull(createdContent);
-        System.out.println(createdContent);
+        ApiResult<CachedContent> result = client.createCachedContent(cachedContent);
 
-        askQuestionsFromCache(createdContent);
+        assertThat(result)
+                .as("CreateCachedContent result")
+                .isInstanceOf(ApiResult.Success.class)
+                .extracting("data", InstanceOfAssertFactories.type(CachedContent.class))
+                .as("Created content")
+                .isNotNull()
+                .satisfies(createdContent -> {
+                    System.out.println(createdContent);
+                    askQuestionsFromCache(createdContent);
+                });
     }
 
     private void askQuestionsFromCache(CachedContent cachedContent) {
@@ -41,33 +50,68 @@ public class GeminiApiClientTest {
                 "Please summarize the three most important points."
         );
 
-        questions.forEach(question -> {
-                    var questionPart = new Part(question,
-                            null, null, null, null);
-                    var request = new GenerateContentRequest(
-                            List.of(new Content(List.of(questionPart), "user")),
-                            null, null, null, null,
-                            new GenerationConfig(null, null,
-                                    1000, 0.7, 0.9, 40),
-                            cachedContent.name()
-                    );
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<Future<ApiResult<GenerateContentResponse>>> futures =
+                    questions.stream()
+                            .map(question -> executor.submit(() -> {
+                                var questionPart = new Part(question, null,
+                                        null, null, null);
+                                var request = new GenerateContentRequest(
+                                        List.of(new Content(List.of(questionPart), "user")),
+                                        null, null, null, null,
+                                        new GenerationConfig(null, null, 1000, 0.7, 0.9, 40),
+                                        cachedContent.name()
+                                );
+                                return client.generateContent("gemini-1.5-flash-001", request);
+                            }))
+                            .toList();
 
-                    // Call the generateContent method
-                    var response = GeminiApiClient.generateContent("gemini-1.5-flash-001", request);
-                    assertNotNull(response);
-                    System.out.println(response);
-                }
-        );
+            assertThat(futures)
+                    .allSatisfy(future -> {
+                        ApiResult<GenerateContentResponse> result;
+                        try {
+                            result = future.get();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            throw new AssertionError("Test was interrupted", e);
+                        } catch (Exception e) {
+                            throw new AssertionError("Error getting future result", e);
+                        }
+
+                        assertThat(result)
+                                .as("GenerateContent result")
+                                .isInstanceOf(ApiResult.Success.class)
+                                .extracting("data", InstanceOfAssertFactories.type(GenerateContentResponse.class))
+                                .as("Generated content response")
+                                .isNotNull()
+                                .satisfies(System.out::println);
+                    });
+        }
     }
 
     @Test
-    public void testListCachedContents() throws Exception {
+    public void testListCachedContents() {
         // Call the listCachedContents method
-        List<CachedContent> cachedContents = GeminiApiClient.listCachedContents(10, null);
-        if (cachedContents != null) {
-            cachedContents.forEach(System.out::println);
+        ApiResult<List<CachedContent>> result = client.listCachedContents(10, null);
+
+        assertThat(result)
+                .as("ListCachedContents result")
+                .isNotNull()
+                .isInstanceOf(ApiResult.Success.class);
+
+        if (result instanceof ApiResult.Success<List<CachedContent>> success) {
+            List<CachedContent> cachedContents = success.data();
+            assertThat(cachedContents)
+                    .as("List of cached contents")
+                    .isNotNull();
+
+            if (cachedContents.isEmpty()) {
+                System.out.println("No cached contents found");
+            } else {
+                cachedContents.forEach(System.out::println);
+            }
         } else {
-            System.out.println("No cached contents found");
+            fail("Expected Success, but got: " + result);
         }
     }
 

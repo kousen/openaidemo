@@ -8,6 +8,10 @@ import java.util.Map;
 import static com.kousenit.gemini.GeminiRecords.SafetySetting.SafetyCategory;
 
 public class GeminiRecords {
+    public sealed interface ApiResult<T> {
+        record Success<T>(T data) implements ApiResult<T> { }
+        record Failure<T>(String error) implements ApiResult<T> { }
+    }
 
     public record CachedContent(
             List<Content> contents,
