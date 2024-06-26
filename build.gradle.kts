@@ -23,11 +23,10 @@ dependencies {
     implementation(libs.httpclient)
     implementation(libs.gson)
     implementation(libs.slf4j)
-    implementation(libs.log4j)
+    implementation(libs.bundles.log4j)
 
     // Apache POI dependencies
     implementation(libs.bundles.poi)
-    implementation("org.apache.commons:commons-compress:1.26.1") // avoid security issue in poi version
 
     // JavaFX dependencies
     implementation("org.openjfx:javafx-controls:21.0.2")
@@ -35,6 +34,13 @@ dependencies {
 
     // JLayer dependencies for playing mp3 files
     implementation(libs.jlayer)
+
+    // PDF text extractor (Apache Tika)
+    implementation(libs.bundles.tika)
+
+    // Fix security issues
+    implementation("org.apache.commons:commons-compress:1.26.1") // Security issue in poi
+    implementation("org.apache.james:apache-mime4j-core:0.8.11") // Security issue in Tika
 
     // Testing
     testImplementation(libs.assertj)

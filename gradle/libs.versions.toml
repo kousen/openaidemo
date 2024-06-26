@@ -9,6 +9,7 @@ log4j = "3.0.0-beta2"
 mockito = "5.12.0"
 poi = "5.2.5"
 slf4j = "2.1.0-alpha1"
+tika = "2.9.1"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -17,17 +18,25 @@ httpclient = { module = "org.apache.httpcomponents.client5:httpclient5", version
 jlayer = { module = "com.github.umjammer:jlayer", version.ref = "jlayer" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitplatform" }
-log4j = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junit = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 poi = { module = "org.apache.poi:poi", version.ref = "poi" }
 poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
 slf4j = { module = "org.slf4j:slf4j-nop", version.ref = "slf4j" }
+tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
+tika-parsers = { module = "org.apache.tika:tika-parsers-standard-package", version.ref = "tika" }
+
 
 [bundles]
 junit = [
     "junit-jupiter",
     "junit-platform-launcher",
+]
+log4j = [
+    "log4j-api",
+    "log4j-core",
 ]
 mockito = [
     "mockito-core",
@@ -36,6 +45,10 @@ mockito = [
 poi = [
     "poi",
     "poi-ooxml",
+]
+tika = [
+    "tika-core",
+    "tika-parsers",
 ]
 
 [plugins]
