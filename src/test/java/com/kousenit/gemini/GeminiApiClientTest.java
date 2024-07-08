@@ -4,6 +4,7 @@ import com.kousenit.utilities.PDFTextExtractor;
 import org.apache.tika.exception.TikaException;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -14,28 +15,35 @@ import java.util.concurrent.Future;
 import static com.kousenit.gemini.GeminiRecords.*;
 import static org.assertj.core.api.Assertions.*;
 
+@EnabledIfEnvironmentVariable(named = "GOOGLEAI_API_KEY", matches = ".+")
 public class GeminiApiClientTest {
     private final GeminiApiClient client = new GeminiApiClient();
 
     @Test
-    public void testCreateCachedContent() throws Exception {
-        // Create a sample CachedContent instance
-        Part part = new Part(readMockitoBook(), null, null, null, null);
-        Content content = new Content(List.of(part), "user");
-        CachedContent cachedContent = new CachedContent(
-                List.of(content), null, null, null, null,
+    public void testMockitoMadeClear() throws Exception {
+        var book = new Content(List.of(
+                new Part(readMockitoBook(), null, null, null, null)
+        ), "user");
+        var systemInstruction = new Content(List.of(
+                new Part("""
+                        You have been given the contents of the book "Mockito Made Clear".
+                        Please answer the following questions based on the book.
+                        If the answer is not in the book, please indicate that.
+                        """, null, null, null, null)), "user");
+        var cachedContent = new CachedContent(List.of(book),
+                null, null, null, null,
                 null, "600s", null, "Mockito Made Clear",
-                "models/gemini-1.5-flash-001", null, null
+                "models/gemini-1.5-flash-001",
+                systemInstruction,
+                null
         );
 
-        // Call the createCachedContent method
+        // Create the cached content
         ApiResult<CachedContent> result = client.createCachedContent(cachedContent);
 
         assertThat(result)
-                .as("CreateCachedContent result")
                 .isInstanceOf(ApiResult.Success.class)
                 .extracting("data", InstanceOfAssertFactories.type(CachedContent.class))
-                .as("Created content")
                 .isNotNull()
                 .satisfies(createdContent -> {
                     System.out.println(createdContent);
@@ -47,7 +55,12 @@ public class GeminiApiClientTest {
         List<String> questions = List.of(
                 "How many chapters are in the book?",
                 "What is the main theme of the book?",
-                "Please summarize the three most important points."
+                "Please summarize the three most important points.",
+                "How do you mock static methods?",
+                "What is the difference between @Mock and @InjectMocks?",
+                "What is the difference between @Mock and @Spy?",
+                "When should you NOT use mocks or stubs?",
+                "What is the difference between a mock and a stub?"
         );
 
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
@@ -59,7 +72,8 @@ public class GeminiApiClientTest {
                                 var request = new GenerateContentRequest(
                                         List.of(new Content(List.of(questionPart), "user")),
                                         null, null, null, null,
-                                        new GenerationConfig(null, null, 1000, 0.7, 0.9, 40),
+                                        new GenerationConfig(null, null,
+                                                1000, 0.7, 0.9, 40),
                                         cachedContent.name()
                                 );
                                 return client.generateContent("gemini-1.5-flash-001", request);
@@ -79,7 +93,6 @@ public class GeminiApiClientTest {
                         }
 
                         assertThat(result)
-                                .as("GenerateContent result")
                                 .isInstanceOf(ApiResult.Success.class)
                                 .extracting("data", InstanceOfAssertFactories.type(GenerateContentResponse.class))
                                 .as("Generated content response")

@@ -40,7 +40,8 @@ public class GeminiApiClient {
             case ApiResult.Success(var jsonObject) -> {
                 if (jsonObject.has("cachedContents")) {
                     Type listType = new TypeToken<List<CachedContent>>(){}.getType();
-                    List<CachedContent> contentList = gson.fromJson(jsonObject.get("cachedContents"), listType);
+                    List<CachedContent> contentList =
+                            gson.fromJson(jsonObject.get("cachedContents"), listType);
                     yield new ApiResult.Success<>(contentList);
                 } else {
                     yield new ApiResult.Success<>(List.of()); // Return an empty list if no cached contents
@@ -50,7 +51,8 @@ public class GeminiApiClient {
         };
     }
     public ApiResult<GenerateContentResponse> generateContent(String model, GenerateContentRequest request) {
-        String endpoint = "%s/models/%s:generateContent?key=%s".formatted(BASE_URL, encodeValue(model), encodeValue(API_KEY));
+        String endpoint = "%s/models/%s:generateContent?key=%s".formatted(
+                BASE_URL, encodeValue(model), encodeValue(API_KEY));
         return sendRequest(endpoint, "POST", request, GenerateContentResponse.class);
     }
 
@@ -68,7 +70,8 @@ public class GeminiApiClient {
             };
 
             try (var httpClient = HttpClient.newHttpClient()) {
-                HttpResponse<String> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response =
+                        httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
                 return handleResponse(response, responseClass);
             }
         } catch (IOException | InterruptedException e) {
@@ -80,7 +83,8 @@ public class GeminiApiClient {
     private <R> ApiResult<R> handleResponse(HttpResponse<String> response, Class<R> responseClass) {
         return switch (response.statusCode()) {
             case HttpURLConnection.HTTP_OK -> new ApiResult.Success<>(gson.fromJson(response.body(), responseClass));
-            default -> new ApiResult.Failure<>("Request failed with status %d: %s".formatted(response.statusCode(), response.body()));
+            default -> new ApiResult.Failure<>(
+                    "Request failed with status %d: %s".formatted(response.statusCode(), response.body()));
         };
     }
 

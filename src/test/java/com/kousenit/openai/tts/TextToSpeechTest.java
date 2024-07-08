@@ -69,7 +69,7 @@ class TextToSpeechTest {
     }
 
     @Test
-    void generateMp3_v2_v1() throws JavaLayerException {
+    void generateMp3_v1() throws JavaLayerException {
         byte[] bytes = tts.generateMp3_v1("tts-1",
                 """
                         The YouTube channel, 'Tales from the jar side' is your best

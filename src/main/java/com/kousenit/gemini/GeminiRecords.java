@@ -50,12 +50,12 @@ public class GeminiRecords {
 
     public record FunctionCall(
             String name,
-            Object args // This can be mapped to a more specific record if the structure is known
+            Object args
     ) {}
 
     public record FunctionResponse(
             String name,
-            Object response // This can be mapped to a more specific record if the structure is known
+            Object response
     ) {}
 
     public record FileData(
